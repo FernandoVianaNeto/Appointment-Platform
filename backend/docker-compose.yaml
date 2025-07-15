@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  appointment-platform-backend-api:
+    build:
+      context: ./
+      dockerfile: .setup/build/Dockerfile
+    container_name: "appointment-platform-backend-api"
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    volumes:
+      - .:/go/src
+    depends_on:
+      - mongo-db
+      - minio
+
+  mongo-db:
+    image: mongo
+    container_name: "appointment-platform-backend-mongo"
+    ports:
+      - "27017:27017"
+
+  minio:
+    image: minio/minio:latest
+    container_name: "appointment-platform-backend-minio"
+    ports:
+      - "9000:9000"   # API S3
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - ./minio-data:/data
+    command: server /data --console-address ":9001"
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: "appointment-platform-backend-nats"
+    ports:
+      - "4222:4222"     # Client connections
+      - "8222:8222"     # Monitoring UI
+    command: "-js"       # Ativa o JetStream
+    volumes:
+      - ./nats-data:/data
+
