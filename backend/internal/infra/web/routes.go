@@ -39,6 +39,16 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 	}
 
 	{
+		appointment := engine.Group("/appointment", middleware.JwtAuthMiddleware())
+		{
+			appointment.POST("/create", server.CreateAppointmentHandler)
+			appointment.GET("/list", server.ListAppointmentsHandler)
+			appointment.PUT("/:uuid", server.EditAppointmentHandler)
+			appointment.DELETE("/:uuid", server.DeleteAppointmentHandler)
+		}
+	}
+
+	{
 		heathCheck := engine.Group("/health")
 		{
 			heathCheck.GET("/check", server.HealthCheckHandler)

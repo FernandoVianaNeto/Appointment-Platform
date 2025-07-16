@@ -4,86 +4,12 @@ import (
 	"appointment-platform-backend-backend/internal/domain/dto"
 	"appointment-platform-backend-backend/internal/infra/web/requests"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (s *Server) CreateAppointmentHandler(ctx *gin.Context) {
-	err := ctx.Request.ParseMultipartForm(10 << 20)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
-		return
-	}
-
-	form := ctx.Request.Form
-
-	password := form.Get("password")
-
-	createUserDto := dto.CreateUserInputDto{
-		Email:    form.Get("email"),
-		Name:     form.Get("name"),
-		Password: &password,
-		Origin:   "local",
-	}
-
-	err = s.CreateUserUsecase.Execute(ctx, createUserDto)
-
-	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	ctx.Status(http.StatusOK)
-}
-
-func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
-	var req requests.GetByUuidRequest
-
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
-		return
-	}
-
-	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserInputDto{Uuid: req.Uuid})
-
-	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	if response == nil {
-		ctx.JSON(http.StatusNotFound, "User not found")
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response)
-}
-
-func (s *Server) DeleteAppointmentsHandler(ctx *gin.Context) {
-	var req requests.GetByUuidRequest
-
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
-		return
-	}
-
-	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserInputDto{Uuid: req.Uuid})
-
-	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	if response == nil {
-		ctx.JSON(http.StatusNotFound, "User not found")
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response)
-}
-
-func (s *Server) EditAppointmentHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
 
 	if err != nil {
@@ -102,15 +28,113 @@ func (s *Server) EditAppointmentHandler(ctx *gin.Context) {
 		return
 	}
 
-	editUserDto := dto.UpdateUserInputDto{
-		Uuid: userUuid,
+	createAppointmentDto := dto.CreateAppointmentInputDto{
+		UserUuid:    userUuid,
+		StartDate:   form.Get("start_date"),
+		EndDate:     form.Get("end_date"),
+		PatientUuid: form.Get("patient_uuid"),
+		Insurance:   form.Get("insurance"),
+		Technician:  form.Get("technician"),
+		Location:    form.Get("location"),
+		Procedure:   form.Get("procedure"),
 	}
 
-	if form.Get("name") != "" {
-		editUserDto.Name = ptr(form.Get("name"))
+	err = s.CreateAppointmentUsecase.Execute(ctx, createAppointmentDto)
+
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
 	}
 
-	err = s.UpdateUserUsecase.Execute(ctx, editUserDto)
+	ctx.Status(http.StatusOK)
+}
+
+func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
+	var queryParams requests.ListAppointmentRequest
+
+	if err := ctx.ShouldBindUri(&queryParams); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
+		return
+	}
+
+	page := 1
+
+	if queryParams.Page != "" {
+		pageInt, err := strconv.Atoi(queryParams.Page)
+
+		if err == nil {
+			page = pageInt
+		}
+	}
+
+	response, err := s.ListPatientUsecase.Execute(ctx, dto.ListPatientInputDto{
+		Page:        page,
+		SearchInput: &queryParams.SearchTerm,
+		FilterType:  &queryParams.FilterType,
+	})
+
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (s *Server) EditAppointmentHandler(ctx *gin.Context) {
+	err := ctx.Request.ParseMultipartForm(10 << 20)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
+		return
+	}
+
+	form := ctx.Request.Form
+
+	if form.Get("uuid") == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing appointment uuid"})
+		return
+	}
+
+	editAppointmentDto := dto.EditAppointmentInputDto{
+		Uuid: form.Get("uuid"),
+	}
+
+	if form.Get("status") != "" {
+		editAppointmentDto.Status = ptr(form.Get("status"))
+	}
+
+	if form.Get("start_date") != "" {
+		editAppointmentDto.StartDate = ptr(form.Get("start_date"))
+	}
+
+	if form.Get("end_date") != "" {
+		editAppointmentDto.EndDate = ptr(form.Get("end_date"))
+	}
+
+	if form.Get("procedure") != "" {
+		editAppointmentDto.Procedure = ptr(form.Get("procedure"))
+	}
+
+	err = s.EditAppointmentUsecase.Execute(ctx, editAppointmentDto)
+
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
+func (s *Server) DeleteAppointmentHandler(ctx *gin.Context) {
+	var req requests.DeleteAppointmentRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
+		return
+	}
+
+	err := s.DeleteAppointmentUsecase.Execute(ctx, dto.DeleteAppointmentInputDto{Uuid: &req.Uuid})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})

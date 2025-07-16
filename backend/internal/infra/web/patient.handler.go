@@ -115,27 +115,27 @@ func (s *Server) EditPatientHandler(ctx *gin.Context) {
 		return
 	}
 
-	editUserDto := dto.EditPatientInputDto{
+	editPatientDto := dto.EditPatientInputDto{
 		Uuid: userUuid,
 	}
 
 	if form.Get("name") != "" {
-		editUserDto.Name = ptr(form.Get("name"))
+		editPatientDto.Name = ptr(form.Get("name"))
 	}
 
 	if form.Get("phone") != "" {
-		editUserDto.Phone = ptr(form.Get("phone"))
+		editPatientDto.Phone = ptr(form.Get("phone"))
 	}
 
 	if form.Get("email") != "" {
-		editUserDto.Email = ptr(form.Get("email"))
+		editPatientDto.Email = ptr(form.Get("email"))
 	}
 
 	if form.Get("address") != "" {
-		editUserDto.Address = ptr(form.Get("address"))
+		editPatientDto.Address = ptr(form.Get("address"))
 	}
 
-	err = s.EditPatientUsecase.Execute(ctx, editUserDto)
+	err = s.EditPatientUsecase.Execute(ctx, editPatientDto)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
