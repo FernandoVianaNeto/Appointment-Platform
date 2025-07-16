@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type CreateAppointmentInputDto struct {
 	Uuid        string `json:"uuid"`
 	UserUuid    string `json:"user_uuid"`
@@ -13,12 +15,13 @@ type CreateAppointmentInputDto struct {
 }
 
 type ListAppointmentInputDto struct {
-	Date        *string `json:"date"`
-	SearchInput *string `json:"search_input"`
-	FilterType  *string `json:"filter_type"`
+	Date        *time.Time `json:"date"`
+	SearchInput *string    `json:"search_input"`
+	FilterType  *string    `json:"filter_type"`
 }
 
 type EditAppointmentInputDto struct {
+	Uuid      string  `json:"uuid"`
 	StartDate *string `json:"start_date"`
 	EndDate   *string `json:"end_date"`
 	Procedure *string `json:"procedure"`

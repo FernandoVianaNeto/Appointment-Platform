@@ -58,6 +58,8 @@ type NatsConfig struct {
 
 type MongoConfig struct {
 	UserCollection              string
+	AppointmentCollection       string
+	PatientCollection           string
 	ResetPasswordCodeCollection string
 	Dsn                         string
 	Database                    string
@@ -115,6 +117,8 @@ func initializeMongoConfigs() {
 		MongoCfg = &MongoConfig{
 			UserCollection:              getEnv("MONGO_USER_COLLECTION", "user"),
 			ResetPasswordCodeCollection: getEnv("MONGO_RESET_PASSWORD_CODE_COLLECTION", "reset_password_code"),
+			AppointmentCollection:       getEnv("APPOINTMENT_COLLECTION", "appointment"),
+			PatientCollection:           getEnv("PATIENT_COLLECTION", "patient"),
 			Dsn:                         getEnv("MONGO_DSN", "mongodb://localhost:27017"),
 			Database:                    getEnv("MONGO_DB", "ecommerce_white_label_backend"),
 		}
