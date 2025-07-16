@@ -1,4 +1,4 @@
-package appointments
+package domain_usecase_appointment
 
 import (
 	"appointment-platform-backend-backend/internal/domain/dto"
