@@ -46,21 +46,18 @@ type MinIOConfig struct {
 	User                   string
 	Password               string
 	ProfileBucket          string
-	ProductBucket          string
 	PresignedURLExpiration string
 }
 
 type NatsConfig struct {
-	Host         string
-	User         string
-	Password     string
-	UserTopic    string
-	ProductTopic string
+	Host      string
+	User      string
+	Password  string
+	UserTopic string
 }
 
 type MongoConfig struct {
 	UserCollection              string
-	ProductCollection           string
 	ResetPasswordCodeCollection string
 	Dsn                         string
 	Database                    string
@@ -108,7 +105,7 @@ func initializeApplicationConfigs() {
 			Env:        getEnv("APP_ENV", "local"),
 			AppVersion: AppVersion,
 			AppPort:    getEnvAsInt("APP_PORT", 3001),
-			JwtSecret:  getEnv("JWT_SECRET", "hash_aleatorio"),
+			JwtSecret:  getEnv("JWT_SECRET", "random_hash"),
 		}
 	}
 }
@@ -117,7 +114,6 @@ func initializeMongoConfigs() {
 	if MongoCfg == nil {
 		MongoCfg = &MongoConfig{
 			UserCollection:              getEnv("MONGO_USER_COLLECTION", "user"),
-			ProductCollection:           getEnv("MONGO_PRODUCT_COLLECTION", "product"),
 			ResetPasswordCodeCollection: getEnv("MONGO_RESET_PASSWORD_CODE_COLLECTION", "reset_password_code"),
 			Dsn:                         getEnv("MONGO_DSN", "mongodb://localhost:27017"),
 			Database:                    getEnv("MONGO_DB", "ecommerce_white_label_backend"),
@@ -148,7 +144,6 @@ func initializeMinIOConfigs() {
 			User:                   getEnv("MINIO_USER", "root"),
 			Password:               getEnv("MINIO_PASSWORD", "password"),
 			ProfileBucket:          getEnv("MINIO_PROFILE_BUCKET", "profile"),
-			ProductBucket:          getEnv("MINIO_PRODUCT_BUCKET", "product"),
 			PresignedURLExpiration: getEnv("PRESIGNED_URL_EXPIRATION", "60"), // Default to 60 minutes
 		}
 	}
@@ -157,11 +152,10 @@ func initializeMinIOConfigs() {
 func initializeNatsConfigs() {
 	if NatsCfg == nil {
 		NatsCfg = &NatsConfig{
-			Host:         getEnv("NATS_HOST", "nats://localhost:4222"),
-			User:         getEnv("NATS_USER", "root"),
-			Password:     getEnv("NATS_PASSWORD", "password"),
-			UserTopic:    getEnv("NATS_USER_TOPIC", "user.events"),
-			ProductTopic: getEnv("NATS_PRODUCT_TOPIC", "product.events"),
+			Host:      getEnv("NATS_HOST", "nats://localhost:4222"),
+			User:      getEnv("NATS_USER", "root"),
+			Password:  getEnv("NATS_PASSWORD", "password"),
+			UserTopic: getEnv("NATS_USER_TOPIC", "user.events"),
 		}
 	}
 }

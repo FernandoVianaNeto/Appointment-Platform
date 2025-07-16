@@ -182,12 +182,6 @@ func NewStorageAdapter(
 		panic("Failed to create profile bucket: " + err.Error())
 	}
 
-	err = storage.CreateBucketIfNotExists(ctx, client, configs.MinIoCfg.ProductBucket)
-
-	if err != nil {
-		panic("Failed to create product bucket: " + err.Error())
-	}
-
 	minioAdapter := minio.NewMinIoAdapter(ctx, client)
 
 	return minioAdapter
