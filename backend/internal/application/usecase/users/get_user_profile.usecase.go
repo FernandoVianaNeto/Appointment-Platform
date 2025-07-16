@@ -28,12 +28,9 @@ func (g *GetUserProfileUsecase) Execute(ctx context.Context, input dto.GetUserIn
 	}
 
 	response := domain_response.GetUserProfileResponse{
-		Uuid:            repositoryResponse.Uuid,
-		Name:            repositoryResponse.Name,
-		Email:           repositoryResponse.Email,
-		ShippingAddress: repositoryResponse.ShippingAddress,
-		BillingAddress:  repositoryResponse.BillingAddress,
-		BirthDate:       repositoryResponse.BirthDate,
+		Uuid:  repositoryResponse.Uuid,
+		Name:  repositoryResponse.Name,
+		Email: repositoryResponse.Email,
 	}
 
 	return &response, err

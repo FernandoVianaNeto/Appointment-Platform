@@ -59,13 +59,10 @@ func (u *CreateUserUsecase) Execute(ctx context.Context, input dto.CreateUserInp
 	entity := entity.NewUser(
 		userUuid,
 		input.Email,
-		input.BirthDate,
 		input.Name,
 		&encryptedPassword,
 		"local",
 		nil,
-		input.ShippingAddress,
-		input.BillingAddress,
 	)
 
 	err = u.UserRepository.Create(ctx, *entity)

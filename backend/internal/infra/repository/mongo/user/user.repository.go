@@ -36,15 +36,12 @@ func (f *UserRepository) Create(ctx context.Context, input entity.User) error {
 	}
 
 	_, err := f.collection.InsertOne(ctx, UserModel{
-		Uuid:            input.Uuid,
-		Email:           input.Email,
-		Name:            input.Name,
-		BirthDate:       input.BirthDate,
-		Password:        passwordString,
-		AuthProvider:    input.AuthProvider,
-		ShippingAddress: input.ShippingAddress,
-		BillingAddress:  input.BillingAddress,
-		GoogleSub:       input.GoogleSub,
+		Uuid:         input.Uuid,
+		Email:        input.Email,
+		Name:         input.Name,
+		Password:     passwordString,
+		AuthProvider: input.AuthProvider,
+		GoogleSub:    input.GoogleSub,
 	})
 
 	return err
@@ -68,13 +65,10 @@ func (f *UserRepository) GetByUuid(ctx context.Context, userUuid string) (*entit
 	}
 
 	entity := entity.User{
-		Uuid:            model.Uuid,
-		Email:           model.Email,
-		BirthDate:       model.BirthDate,
-		Name:            model.Name,
-		AuthProvider:    model.AuthProvider,
-		BillingAddress:  model.BillingAddress,
-		ShippingAddress: model.ShippingAddress,
+		Uuid:         model.Uuid,
+		Email:        model.Email,
+		Name:         model.Name,
+		AuthProvider: model.AuthProvider,
 	}
 
 	return &entity, err
@@ -99,10 +93,9 @@ func (f *UserRepository) GetByEmailAndAuthProvider(ctx context.Context, email st
 	}
 
 	entity := entity.User{
-		Uuid:      model.Uuid,
-		Email:     model.Email,
-		BirthDate: model.BirthDate,
-		Name:      model.Name,
+		Uuid:  model.Uuid,
+		Email: model.Email,
+		Name:  model.Name,
 		Password: func() *[]byte {
 			if model.Password == nil {
 				return nil
@@ -110,9 +103,7 @@ func (f *UserRepository) GetByEmailAndAuthProvider(ctx context.Context, email st
 			b := []byte(*model.Password)
 			return &b
 		}(),
-		AuthProvider:    model.AuthProvider,
-		BillingAddress:  model.BillingAddress,
-		ShippingAddress: model.ShippingAddress,
+		AuthProvider: model.AuthProvider,
 	}
 
 	return &entity, err

@@ -2,7 +2,7 @@ package web
 
 import (
 	"appointment-platform-backend-backend/internal/domain/dto"
-	mongo_exception "appointment-platform-backend-backend/internal/infra/repository/mongo/exceptions"
+	mongo_exception "appointment-platform-backend-backend/internal/infra/exceptions"
 	"appointment-platform-backend-backend/internal/infra/web/requests"
 	"net/http"
 
