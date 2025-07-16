@@ -4,6 +4,7 @@ import (
 	"appointment-platform-backend-backend/internal/domain/dto"
 	"appointment-platform-backend-backend/internal/infra/web/requests"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,11 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 	}
 
 	form := ctx.Request.Form
+
+	if form.Get("name") == "" || form.Get("phone") == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body. Missing params"})
+		return
+	}
 
 	email := form.Get("email")
 	address := form.Get("address")
@@ -41,22 +47,31 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 }
 
 func (s *Server) ListPatientHandler(ctx *gin.Context) {
-	var req requests.GetByUuidRequest
+	var queryParams requests.ListPatientRequest
 
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindUri(&queryParams); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
 	}
 
-	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserInputDto{Uuid: req.Uuid})
+	page := 1
+
+	if queryParams.Page != "" {
+		pageInt, err := strconv.Atoi(queryParams.Page)
+
+		if err == nil {
+			page = pageInt
+		}
+	}
+
+	response, err := s.ListPatientUsecase.Execute(ctx, dto.ListPatientInputDto{
+		Page:        page,
+		SearchInput: &queryParams.SearchTerm,
+		FilterType:  &queryParams.FilterType,
+	})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	if response == nil {
-		ctx.JSON(http.StatusNotFound, "User not found")
 		return
 	}
 
@@ -64,29 +79,24 @@ func (s *Server) ListPatientHandler(ctx *gin.Context) {
 }
 
 func (s *Server) DeletePatientHandler(ctx *gin.Context) {
-	var req requests.GetByUuidRequest
+	var req requests.DeletePatientRequest
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
 	}
 
-	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserInputDto{Uuid: req.Uuid})
+	err := s.DeletePatientUsecase.Execute(ctx, dto.DeletePatientInputDto{Uuid: &req.Uuid})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
 	}
 
-	if response == nil {
-		ctx.JSON(http.StatusNotFound, "User not found")
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response)
+	ctx.Status(http.StatusOK)
 }
 
-func (s *Server) UpdatePatientHandler(ctx *gin.Context) {
+func (s *Server) EditPatientHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
 
 	if err != nil {
@@ -105,14 +115,27 @@ func (s *Server) UpdatePatientHandler(ctx *gin.Context) {
 		return
 	}
 
-	editUserDto := dto.UpdateUserInputDto{
+	editUserDto := dto.EditPatientInputDto{
 		Uuid: userUuid,
 	}
+
 	if form.Get("name") != "" {
 		editUserDto.Name = ptr(form.Get("name"))
 	}
 
-	err = s.UpdateUserUsecase.Execute(ctx, editUserDto)
+	if form.Get("phone") != "" {
+		editUserDto.Phone = ptr(form.Get("phone"))
+	}
+
+	if form.Get("email") != "" {
+		editUserDto.Email = ptr(form.Get("email"))
+	}
+
+	if form.Get("address") != "" {
+		editUserDto.Address = ptr(form.Get("address"))
+	}
+
+	err = s.EditPatientUsecase.Execute(ctx, editUserDto)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
