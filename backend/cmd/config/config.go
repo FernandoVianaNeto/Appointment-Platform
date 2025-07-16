@@ -120,7 +120,7 @@ func initializeMongoConfigs() {
 			AppointmentCollection:       getEnv("APPOINTMENT_COLLECTION", "appointment"),
 			PatientCollection:           getEnv("PATIENT_COLLECTION", "patient"),
 			Dsn:                         getEnv("MONGO_DSN", "mongodb://localhost:27017"),
-			Database:                    getEnv("MONGO_DB", "ecommerce_white_label_backend"),
+			Database:                    getEnv("MONGO_DB", "appointment-plataform"),
 		}
 	}
 }

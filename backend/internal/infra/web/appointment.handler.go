@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Server) CreateUserHandler(ctx *gin.Context) {
+func (s *Server) CreateAppointmentHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
 
 	if err != nil {
@@ -37,30 +37,7 @@ func (s *Server) CreateUserHandler(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (s *Server) CreateGoogleUserHandler(ctx *gin.Context) {
-	var req requests.CreateGoogleUserRequest
-
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request body"})
-		return
-	}
-
-	err := s.CreateUserUsecase.Execute(ctx, dto.CreateUserInputDto{
-		Email:    req.Email,
-		Name:     req.Name,
-		Password: nil,
-		Origin:   "google",
-	})
-
-	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	ctx.Status(http.StatusOK)
-}
-
-func (s *Server) GetUserProfileHandler(ctx *gin.Context) {
+func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
 	var req requests.GetByUuidRequest
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -83,7 +60,30 @@ func (s *Server) GetUserProfileHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (s *Server) UpdateUserHandler(ctx *gin.Context) {
+func (s *Server) DeleteAppointmentsHandler(ctx *gin.Context) {
+	var req requests.GetByUuidRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
+		return
+	}
+
+	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserInputDto{Uuid: req.Uuid})
+
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response == nil {
+		ctx.JSON(http.StatusNotFound, "User not found")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (s *Server) EditAppointmentHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
 
 	if err != nil {
@@ -118,8 +118,4 @@ func (s *Server) UpdateUserHandler(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusOK)
-}
-
-func ptr(s string) *string {
-	return &s
 }

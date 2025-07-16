@@ -1,4 +1,4 @@
-package appointment_code_mongo_repository
+package appointment_mongo_repository
 
 import (
 	configs "appointment-platform-backend-backend/cmd/config"

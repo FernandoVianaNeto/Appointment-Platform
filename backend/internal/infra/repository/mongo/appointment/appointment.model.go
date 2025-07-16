@@ -1,4 +1,4 @@
-package appointment_code_mongo_repository
+package appointment_mongo_repository
 
 type AppointmentModel struct {
 	Uuid        string `json:"uuid" bson:"uuid"`

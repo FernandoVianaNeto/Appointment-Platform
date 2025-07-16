@@ -115,17 +115,8 @@ func (f *UserRepository) UpdateByUuid(ctx context.Context, input dto.UpdateUserI
 	}
 	setFields := bson.M{}
 
-	if input.BirthDate != nil {
-		setFields["birth_date"] = *input.BirthDate
-	}
 	if input.Email != nil {
 		setFields["email"] = *input.Email
-	}
-	if input.ShippingAddress != nil {
-		setFields["shipping_address"] = input.ShippingAddress
-	}
-	if input.ShippingAddress != nil {
-		setFields["shipping_address"] = input.BillingAddress
 	}
 	if input.Name != nil {
 		setFields["name"] = *input.Name
