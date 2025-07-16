@@ -27,7 +27,7 @@ func NewAppointmentRepository(db *mongo.Database) domain_repository.AppointmentR
 }
 
 func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appointment) error {
-	resetPasswordCodeEntity := AppointmentModel{
+	appointmentEntity := AppointmentModel{
 		UserUuid:    input.UserUuid,
 		Uuid:        input.Uuid,
 		StartDate:   input.StartDate,
@@ -40,7 +40,7 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 		Procedure:   input.Procedure,
 	}
 
-	_, err := f.collection.InsertOne(ctx, resetPasswordCodeEntity)
+	_, err := f.collection.InsertOne(ctx, appointmentEntity)
 
 	if err != nil {
 		return err

@@ -11,8 +11,8 @@ import (
 const Patient = "patient"
 
 type PatientRepositoryInterface interface {
-	Create(ctx context.Context, input entity.ResetPasswordCode) (int, error)
+	Create(ctx context.Context, input entity.Patient) error
 	List(ctx context.Context, input dto.ListPatientInputDto) ([]entity.Patient, error)
 	Edit(ctx context.Context, input dto.EditPatientInputDto) error
-	Delete(ctx context.Context, input dto.DeletePatientInputDto) error
+	Delete(ctx context.Context, input dto.DeletePatientInputDto)
 }
