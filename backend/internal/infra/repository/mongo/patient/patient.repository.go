@@ -5,10 +5,12 @@ import (
 	"appointment-platform-backend-backend/internal/domain/dto"
 	"appointment-platform-backend-backend/internal/domain/entity"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
+	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PatientRepository struct {
@@ -41,24 +43,17 @@ func (f *PatientRepository) Create(ctx context.Context, input entity.Patient) er
 }
 
 func (f *PatientRepository) List(ctx context.Context, input dto.ListPatientInputDto) ([]entity.Patient, error) {
-	filters := bson.M{}
+	filters := buildListFilters(input)
 
-	if input.SearchInput != nil {
-		if input.FilterType != nil {
-			filters[*input.FilterType] = bson.M{
-				"$regex":   *input.SearchInput,
-				"$options": "i",
-			}
-		} else {
-			filters["$or"] = bson.A{
-				bson.M{"phone": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-				bson.M{"name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-				bson.M{"email": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-			}
-		}
-	}
+	limit := int64(domain_response.DEFAULT_ITEMS_PER_PAGE)
+	skip := int64((input.Page - 1)) * limit
 
-	cursor, err := f.collection.Find(ctx, filters)
+	opts := options.Find()
+	opts.SetLimit(limit)
+	opts.SetSkip(skip)
+	opts.SetSort(bson.M{"created_at": -1})
+
+	cursor, err := f.collection.Find(ctx, filters, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -104,4 +99,52 @@ func (f *PatientRepository) Delete(ctx context.Context, input dto.DeletePatientI
 	filter := bson.M{"uuid": input.Uuid}
 
 	f.collection.FindOneAndDelete(ctx, filter)
+}
+
+func (f *PatientRepository) GetByUuid(ctx context.Context, uuid string) (entity.Patient, error) {
+	var model PatientModel
+
+	filter := bson.M{"uuid": uuid}
+
+	err := f.collection.FindOne(ctx, filter).Decode(&model)
+
+	response := entity.Patient{
+		Uuid:      model.Uuid,
+		Name:      model.Name,
+		Phone:     model.Phone,
+		Insurance: model.Insurance,
+		Address:   model.Address,
+		Email:     model.Email,
+	}
+
+	return response, err
+}
+
+func (f *PatientRepository) CountDocuments(ctx context.Context, input dto.ListPatientInputDto) (int64, error) {
+	filters := buildListFilters(input)
+
+	total, err := f.collection.CountDocuments(ctx, filters)
+
+	return total, err
+}
+
+func buildListFilters(input dto.ListPatientInputDto) bson.M {
+	var filters = bson.M{}
+
+	if input.SearchInput != nil {
+		if input.FilterType != nil {
+			filters[*input.FilterType] = bson.M{
+				"$regex":   *input.SearchInput,
+				"$options": "i",
+			}
+		} else {
+			filters["$or"] = bson.A{
+				bson.M{"phone": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+				bson.M{"name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+				bson.M{"email": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+			}
+		}
+	}
+
+	return filters
 }

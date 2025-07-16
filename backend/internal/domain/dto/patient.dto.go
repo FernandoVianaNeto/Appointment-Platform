@@ -1,14 +1,16 @@
 package dto
 
 type CreatePatientInputDto struct {
-	Uuid    string  `json:"uuid"`
-	Name    string  `json:"name"`
-	Phone   string  `json:"phone"`
-	Email   *string `json:"email"`
-	Address *string `json:"address"`
+	Uuid      string  `json:"uuid"`
+	Name      string  `json:"name"`
+	Phone     string  `json:"phone"`
+	Email     *string `json:"email"`
+	Address   *string `json:"address"`
+	Insurance *string `json:"insurance"`
 }
 
 type ListPatientInputDto struct {
+	Page        int     `json:"page"`
 	SearchInput *string `json:"search_input"`
 	FilterType  *string `json:"filter_type"`
 }

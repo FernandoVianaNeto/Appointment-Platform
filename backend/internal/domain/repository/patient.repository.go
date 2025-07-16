@@ -15,4 +15,6 @@ type PatientRepositoryInterface interface {
 	List(ctx context.Context, input dto.ListPatientInputDto) ([]entity.Patient, error)
 	Edit(ctx context.Context, input dto.EditPatientInputDto) error
 	Delete(ctx context.Context, input dto.DeletePatientInputDto)
+	GetByUuid(ctx context.Context, uuid string) (entity.Patient, error)
+	CountDocuments(ctx context.Context, input dto.ListPatientInputDto) (int64, error)
 }

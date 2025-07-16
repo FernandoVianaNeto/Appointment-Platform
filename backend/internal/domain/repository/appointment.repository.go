@@ -15,4 +15,5 @@ type AppointmentRepositoryInterface interface {
 	List(ctx context.Context, input dto.ListAppointmentInputDto) ([]entity.Appointment, error)
 	Edit(ctx context.Context, input dto.EditAppointmentInputDto) error
 	Delete(ctx context.Context, input dto.DeleteAppointmentInputDto)
+	CountDocuments(ctx context.Context, input dto.ListAppointmentInputDto) (int64, error)
 }
