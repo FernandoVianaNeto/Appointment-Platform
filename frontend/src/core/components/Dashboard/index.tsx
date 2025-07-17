@@ -1,9 +1,13 @@
 import { Container } from './styles';
 
-function Dashboard() {
+type Props = {
+  children: React.ReactNode;
+};
+
+function Dashboard({ children }: Props) {
   return (
     <Container>
-      <h1>DEU BOM</h1>
+      {children}
     </Container>
   );
 }

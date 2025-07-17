@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login/index';
-import Home from './pages/Home';
+import Home from './pages/Appointments';
 
 export default function App() {
   return (

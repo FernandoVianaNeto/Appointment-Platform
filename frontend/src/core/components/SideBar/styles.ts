@@ -7,6 +7,7 @@ export const Container = styled.section`
     height: 100vh;
     background-color: ${({ theme }) => theme.colors.primary};
     width: 10vw;
+    position: absolute;
     color: ${({theme}) => theme.colors.white};
     border: none;
 `;
@@ -16,8 +17,8 @@ export const Logo = styled.h1`
   align-items: center;
   justify-content: center;
   padding-bottom: 20px;
-  border-bottom: 0.5px solid ${({ theme }) => theme.colors.highlighBackground};
   padding: 30px;
+  height: 100px;
 `;
 
 export const ButtonWrapper = styled.div`
