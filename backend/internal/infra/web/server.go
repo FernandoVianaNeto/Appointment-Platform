@@ -7,6 +7,8 @@ import (
 	domain_usecase "appointment-platform-backend-backend/internal/domain/usecase/user"
 	"context"
 
+	"github.com/gin-contrib/cors"
+
 	gin "github.com/gin-gonic/gin"
 )
 
@@ -50,6 +52,13 @@ func NewServer(
 	deleteAppointmentUsecase domain_usecase_appointment.DeleteAppointmentUsecaseInterface,
 ) *Server {
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
 
 	server := &Server{
 		CreateUserUsecase:                createUserUsecase,

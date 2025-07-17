@@ -10,7 +10,7 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 	{
 		auth := engine.Group("/auth")
 		{
-			auth.POST("/", server.AuthHandler)
+			auth.POST("/login", server.AuthHandler)
 			auth.POST("/google", server.GoogleAuthHandler)
 			auth.POST("/generate-reset-code", server.GenerateResetPasswordCodeHandler)
 			auth.POST("/reset-password", server.ResetPasswordHandler)

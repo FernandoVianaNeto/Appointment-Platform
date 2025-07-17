@@ -1,6 +1,6 @@
 import { Container } from './styles';
 
-function Login() {
+function Home() {
   return (
     <Container>
       <h1>DEU BOM</h1>
@@ -8,4 +8,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Home;
