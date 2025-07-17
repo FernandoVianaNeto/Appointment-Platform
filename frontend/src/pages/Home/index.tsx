@@ -1,9 +1,19 @@
+import Dashboard from '../../core/components/Dashboard';
+import SideBar from '../../core/components/SideBar';
+import SideBarButton from '../../core/components/SideBarButton';
 import { Container } from './styles';
 
 function Home() {
   return (
     <Container>
-      <h1>DEU BOM</h1>
+      <SideBar>
+          <SideBarButton text="Appointments" highlight/>
+          <SideBarButton text="Patients" />
+          <SideBarButton text="Appointments"/>
+      </SideBar>
+      <Dashboard>
+
+      </Dashboard>
     </Container>
   );
 }
