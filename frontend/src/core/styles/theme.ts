@@ -1,6 +1,6 @@
 export const defaultTheme = {
     colors: {
-      primary: '#8db391',
+      primary: '#344293',
       background: '#f2f2f2',
       highlighBackground: '#f7f7f7',
       highlightButton: '#b40005',

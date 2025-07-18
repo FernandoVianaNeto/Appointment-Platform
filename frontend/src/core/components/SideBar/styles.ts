@@ -5,7 +5,7 @@ export const Container = styled.section`
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    background-color: ${({ theme }) => theme.colors.primary};
+    background: linear-gradient(116deg, #344293 -0.38%, rgba(52, 66, 147, 0.00) 66.54%), #344293;
     width: 10vw;
     position: absolute;
     color: ${({theme}) => theme.colors.white};
