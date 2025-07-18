@@ -7,6 +7,7 @@ import SideBar from '../../core/components/SideBar';
 import SideBarButton from '../../core/components/SideBarButton';
 import { Container, Div, H1, Wrapper } from './styles';
 import DateSelector from '../../core/components/DateSelector';
+import CreationButton from '../../core/components/CreationEditButton';
 
 function Appointments() {
   const [selected, setSelected] = useState('')
@@ -31,6 +32,7 @@ function Appointments() {
           <H1>Appointments</H1>
             <Div>
               <DateSelector />
+              <CreationButton text="New Appointment" highlight/>
             </Div>
         </Wrapper>
       </Dashboard>

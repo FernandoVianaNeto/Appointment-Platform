@@ -5,6 +5,7 @@ export const Wrapper = styled.div`
     align-items: center;
     gap: 24px;
     font-family: 'sans-serif';
+    min-width: 250px;
 `;
 
 export const CircleButton = styled.button`
