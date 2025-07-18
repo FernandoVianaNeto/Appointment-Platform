@@ -42,11 +42,11 @@ func (u *ListAppointmentUsecase) Execute(ctx context.Context, input dto.ListAppo
 		return defaultResponse, nil
 	}
 
-	for i, appointment := range appointments {
+	for _, appointment := range appointments {
 		patient, err := u.PatientRepository.GetByUuid(ctx, appointment.PatientUuid)
 
 		if err == nil {
-			response[i] = domain_response.AppointmentData{
+			response = append(response, domain_response.AppointmentData{
 				StartDate: appointment.StartDate,
 				EndDate:   appointment.EndDate,
 				Patient: domain_response.Patient{
@@ -57,9 +57,7 @@ func (u *ListAppointmentUsecase) Execute(ctx context.Context, input dto.ListAppo
 				Procedure: appointment.Procedure,
 				Location:  appointment.Location,
 				Status:    appointment.Status,
-			}
-		} else {
-			response[i] = domain_response.AppointmentData{}
+			})
 		}
 	}
 

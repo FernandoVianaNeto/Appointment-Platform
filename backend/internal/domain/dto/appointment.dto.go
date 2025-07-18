@@ -16,6 +16,7 @@ type CreateAppointmentInputDto struct {
 
 type ListAppointmentInputDto struct {
 	Page        int        `json:"page"`
+	UserUuid    string     `json:"user_uuid"`
 	Date        *time.Time `json:"date"`
 	SearchInput *string    `json:"search_input"`
 	FilterType  *string    `json:"filter_type"`

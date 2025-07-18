@@ -7,7 +7,7 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
-	"time"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -53,6 +53,7 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 
 func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointmentInputDto) ([]entity.Appointment, error) {
 	filters := buildListFilters(input)
+	fmt.Println("FILTERS", filters, input)
 
 	limit := int64(domain_response.DEFAULT_ITEMS_PER_PAGE)
 	skip := int64((input.Page - 1)) * limit
@@ -68,12 +69,29 @@ func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointm
 	}
 	defer cursor.Close(ctx)
 
-	var appointments []entity.Appointment
+	var appointments []AppointmentModel
 	if err := cursor.All(ctx, &appointments); err != nil {
 		return []entity.Appointment{}, err
 	}
 
-	return appointments, nil
+	entitiesAppointment := make([]entity.Appointment, 0, len(appointments))
+	for _, appointment := range appointments {
+		fmt.Println(appointment)
+		entitiesAppointment = append(entitiesAppointment, entity.Appointment{
+			Uuid:        appointment.Uuid,
+			UserUuid:    appointment.UserUuid,
+			StartDate:   appointment.StartDate,
+			EndDate:     appointment.EndDate,
+			PatientUuid: appointment.PatientUuid,
+			Insurance:   appointment.Insurance,
+			Technician:  appointment.Technician,
+			Location:    appointment.Location,
+			Status:      appointment.Status,
+			Procedure:   appointment.Procedure,
+		})
+	}
+
+	return entitiesAppointment, nil
 }
 
 func (f *AppointmentRepository) Edit(ctx context.Context, input dto.EditAppointmentInputDto) error {
@@ -119,37 +137,39 @@ func (f *AppointmentRepository) CountDocuments(ctx context.Context, input dto.Li
 }
 
 func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
-	filters := bson.M{}
-
-	var start, end time.Time
-	if input.Date == nil {
-		now := time.Now()
-		start = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-		end = start.Add(24 * time.Hour)
-	} else {
-		start = time.Date(input.Date.Year(), input.Date.Month(), input.Date.Day(), 0, 0, 0, 0, input.Date.Location())
-		end = start.Add(24 * time.Hour)
+	filters := bson.M{
+		"user_uuid": input.UserUuid,
 	}
 
-	filters["start_date"] = bson.M{
-		"$gte": start,
-		"$lt":  end,
-	}
+	// var start, end time.Time
+	// if input.Date == nil {
+	// 	now := time.Now()
+	// 	start = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	// 	end = start.Add(24 * time.Hour)
+	// } else {
+	// 	start = time.Date(input.Date.Year(), input.Date.Month(), input.Date.Day(), 0, 0, 0, 0, input.Date.Location())
+	// 	end = start.Add(24 * time.Hour)
+	// }
 
-	if input.SearchInput != nil {
-		if input.FilterType != nil {
-			filters[*input.FilterType] = bson.M{
-				"$regex":   *input.SearchInput,
-				"$options": "i",
-			}
-		} else {
-			filters["$or"] = bson.A{
-				bson.M{"technician": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-				bson.M{"patient_name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-				bson.M{"insurances": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-			}
-		}
-	}
+	// filters["start_date"] = bson.M{
+	// 	"$gte": start,
+	// 	"$lt":  end,
+	// }
+
+	// if input.SearchInput != nil {
+	// 	if input.FilterType != nil {
+	// 		filters[*input.FilterType] = bson.M{
+	// 			"$regex":   *input.SearchInput,
+	// 			"$options": "i",
+	// 		}
+	// 	} else {
+	// 		filters["$or"] = bson.A{
+	// 			bson.M{"technician": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+	// 			bson.M{"patient_name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+	// 			bson.M{"insurances": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+	// 		}
+	// 	}
+	// }
 
 	return filters
 }

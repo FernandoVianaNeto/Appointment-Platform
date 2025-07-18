@@ -108,6 +108,10 @@ func (f *PatientRepository) GetByUuid(ctx context.Context, uuid string) (entity.
 
 	err := f.collection.FindOne(ctx, filter).Decode(&model)
 
+	if err != nil {
+		return entity.Patient{}, err
+	}
+
 	response := entity.Patient{
 		Uuid:      model.Uuid,
 		Name:      model.Name,

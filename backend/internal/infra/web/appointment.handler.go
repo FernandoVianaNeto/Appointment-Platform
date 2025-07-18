@@ -52,6 +52,15 @@ func (s *Server) CreateAppointmentHandler(ctx *gin.Context) {
 func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
 	var queryParams requests.ListAppointmentRequest
 
+	value := ctx.Value("user_uuid")
+
+	userUuid, ok := value.(string)
+
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "User not found in context"})
+		return
+	}
+
 	if err := ctx.ShouldBindUri(&queryParams); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
@@ -68,6 +77,7 @@ func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
 	}
 
 	response, err := s.ListAppointmentUsecase.Execute(ctx, dto.ListAppointmentInputDto{
+		UserUuid:    userUuid,
 		Page:        page,
 		SearchInput: &queryParams.SearchTerm,
 		FilterType:  &queryParams.FilterType,
