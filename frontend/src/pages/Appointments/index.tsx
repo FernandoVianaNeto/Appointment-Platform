@@ -2,14 +2,17 @@ import { useState } from 'react';
 import Dashboard from '../../core/components/Dashboard';
 import Header from '../../core/components/Header';
 import HeaderInput from '../../core/components/HeaderInput';
-import HeaderOption from '../../core/components/HeaderOption';
 import HeaderSelect from '../../core/components/HeaderSelect';
 import SideBar from '../../core/components/SideBar';
 import SideBarButton from '../../core/components/SideBarButton';
 import { Container } from './styles';
 
 function Appointments() {
-  const [selected, setSelected] = useState(false)
+  const [selected, setSelected] = useState('')
+
+  const handleSelectChange = (value: string) => {
+    setSelected(value)
+  };
 
   return (
     <Container>
@@ -20,17 +23,7 @@ function Appointments() {
       </SideBar>
       <Dashboard>
         <Header>
-          <HeaderSelect>
-            <HeaderOption selected={selected}>
-              All
-            </HeaderOption>
-            <HeaderOption selected={selected}>
-              All
-            </HeaderOption>
-            <HeaderOption selected={selected}>
-              All
-            </HeaderOption>
-          </HeaderSelect>
+          <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleSelectChange}/>
           <HeaderInput />  
         </ Header>
       </Dashboard>

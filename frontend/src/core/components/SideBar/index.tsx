@@ -8,7 +8,7 @@ function SideBar({children}: Props) {
   return (
     <Container>
         <Logo>
-            Platform
+            Clinic
         </Logo>
         <ButtonWrapper>
           {children}

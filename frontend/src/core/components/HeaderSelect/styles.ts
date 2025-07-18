@@ -8,13 +8,15 @@ export const SelectWrapper = styled.div`
 
 export const StyledSelect = styled.div`
   background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 0.5px solid #ccc;
+  border-radius: 6px 0px 0px 6px;
   padding: 10px 40px 10px 15px;
   cursor: pointer;
   color: #333;
   user-select: none;
   position: relative;
+  height: 40px;
+  margin-right: 5px;
 `;
 
 export const DropdownIcon = styled.span<{
