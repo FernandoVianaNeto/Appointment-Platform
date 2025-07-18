@@ -4,7 +4,8 @@ export const Container = styled.header`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 50px;
+    padding: 40px;
+    max-height: 120px;
     color: ${({theme}) => theme.colors.white};
     border-bottom: 2px solid ${({theme}) => theme.colors.highlighBackground};
 `;
@@ -14,7 +15,7 @@ export const Wrapper = styled.div`
 `;
 
 export const ButtonText = styled.p`
-    font-size: 12px;
+    font-size: 14px;
     margin-left: 5px;
 `;
 
@@ -30,9 +31,12 @@ export const IconButton = styled.button`
 `;
 
 export const SearchButton = styled.button`
+    background-color: ${({theme}) => theme.colors.background};
     border: none;
-    background-color: transparent;
-    font-size: 20px;
+    padding: 13px 20px;
+    font-size: 14px;
+    font-weight: 600;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -40,5 +44,7 @@ export const SearchButton = styled.button`
     margin-left: 20px;
 `;
 
-export const Input = styled.input`
+export const Select = styled.input`
+    border: 1px solid ${({theme}) => theme.colors.grey};
+    padding: 10px;
 `;

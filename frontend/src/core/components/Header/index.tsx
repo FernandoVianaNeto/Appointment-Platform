@@ -1,4 +1,4 @@
-import { ButtonText, Container, IconButton, Input, SearchButton, Wrapper } from './styles';
+import { ButtonText, Container, IconButton, SearchButton, Wrapper } from './styles';
 import { RiAccountCircleFill } from "react-icons/ri";
 import { IoMdSettings } from "react-icons/io";
 
@@ -6,13 +6,14 @@ type Props = {
   children: React.ReactNode;
 };
 
-function DashboardHeader({children}: Props) {
+function Header({children}: Props) {
   return (
     <Container>
         <Wrapper>
             {children}
-            <Input value='Search'/>
-            <SearchButton />
+            <SearchButton> 
+              Search 
+            </SearchButton>
         </Wrapper>
         <Wrapper>
             <IconButton>
@@ -27,4 +28,4 @@ function DashboardHeader({children}: Props) {
   );
 }
 
-export default DashboardHeader;
+export default Header;

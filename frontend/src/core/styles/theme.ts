@@ -1,12 +1,13 @@
 export const defaultTheme = {
     colors: {
-      primary: '#4e00df',
+      primary: '#1500ff',
       background: '#f2f2f2',
       highlighBackground: '#f7f7f7',
       highlightButton: '#b40005',
       text: '#333',
       button: '#000',
       white: '#fff',
+      grey: '#808080'
     },
     spacing: {
       sm: '8px',
