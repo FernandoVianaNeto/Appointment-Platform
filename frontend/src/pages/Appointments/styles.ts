@@ -20,3 +20,22 @@ export const Div = styled.div`
   display: flex;
   gap: 20px;
 `;
+
+export const DashboardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  gap: 20px;
+
+  p {
+    font-size: 16px;
+    font-weight: bold;
+    color: ${({ theme }) => theme.colors.primary}
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+`;

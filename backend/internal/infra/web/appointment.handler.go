@@ -67,7 +67,7 @@ func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
 		}
 	}
 
-	response, err := s.ListPatientUsecase.Execute(ctx, dto.ListPatientInputDto{
+	response, err := s.ListAppointmentUsecase.Execute(ctx, dto.ListAppointmentInputDto{
 		Page:        page,
 		SearchInput: &queryParams.SearchTerm,
 		FilterType:  &queryParams.FilterType,

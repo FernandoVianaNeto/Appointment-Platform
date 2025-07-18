@@ -4,6 +4,9 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
 `;
 
 export const Form = styled.form`
@@ -23,7 +26,7 @@ export const Input = styled.input`
   width: 100%;
   padding: ${({ theme }) => theme.spacing.sm};
   margin-bottom: ${({ theme }) => theme.spacing.md};
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.colors.highlighBackground};
   border-radius: ${({ theme }) => theme.borderRadius};
 `;
 

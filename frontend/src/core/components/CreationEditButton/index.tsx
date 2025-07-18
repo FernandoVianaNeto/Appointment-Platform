@@ -1,21 +1,26 @@
-import { Container } from './styles';
+import { Button } from './styles';
 import { FaPlus } from "react-icons/fa6"
 import { MdEdit } from "react-icons/md";
-interface CreationButtonProps {
+interface CreationEditButtonProps {
     text: string;
     highlight?: boolean,
-    edit?: boolean
+    edit?: boolean,
+    onClick?: () => void,
 }
 
-function CreationButton({ text, highlight, edit }: CreationButtonProps) {
+function CreationEditButton({ text, highlight, edit, onClick }: CreationEditButtonProps) {
+  function handleClick() {
+    onClick?.();
+  } 
+
   return (
-    <Container highlight={highlight}>
+    <Button highlight={highlight} onClick={handleClick}>
       {
         edit ? <MdEdit /> : <FaPlus />
       }
       {text}
-    </Container>
+    </Button>
   );
 }
 
-export default CreationButton;
+export default CreationEditButton;
