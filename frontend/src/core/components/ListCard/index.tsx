@@ -2,7 +2,7 @@ import { AppointmentRow, IconWrapper, Column, Status, PhoneIcon } from './styles
 import { CiCalendar } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { GiConfirmed } from "react-icons/gi";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   patientName: string,
@@ -13,14 +13,19 @@ type Props = {
   status: string,
   startDate: string,
   endDate: string,
+  rowSelected?: boolean,
 };
 
-function ListCard({ patientName, insurance, location, procedure, status, technician, startDate, endDate }: Props) {
-  const [rowSelect, setRowSelected] = useState(false);
+function ListCard({ patientName, insurance, location, procedure, status, technician, startDate, endDate, rowSelected }: Props) {
+  const [rowSelect, setRowSelected] = useState(rowSelected);
+
+  useEffect(() => {
+    setRowSelected(rowSelected)
+  }, [rowSelected])
 
   return (
     <AppointmentRow rowSelected={rowSelect}>
-      <input type="checkbox" onChange={() => setRowSelected(!rowSelect)}/>
+      <input type="checkbox" onChange={() => setRowSelected(!rowSelect)}  checked={rowSelect}/>
       <Column>{startDate} - {endDate}</Column>
       <Column bold>{patientName}</Column>
       <Column>{insurance}</Column>

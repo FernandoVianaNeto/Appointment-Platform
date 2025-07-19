@@ -14,7 +14,6 @@ import { listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
-import dayjs from 'dayjs';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -22,6 +21,7 @@ function Appointments() {
   const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
+  const [rowSelection, setRowSelection] = useState(false);
   
   const handleSelectChange = (value: string) => {
     setSelected(value)
@@ -73,7 +73,7 @@ function Appointments() {
         </Wrapper>
         <DashboardWrapper>
           <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
-          <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]}/>
+          <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
           {loading ? <p>Loading...</p> : (
             <DashboardList>
               {
@@ -90,6 +90,7 @@ function Appointments() {
                       procedure={appointment.procedure}
                       status={appointment.status}
                       technician="Fernando"
+                      rowSelected={rowSelection}
                     />
                   ))
               }
