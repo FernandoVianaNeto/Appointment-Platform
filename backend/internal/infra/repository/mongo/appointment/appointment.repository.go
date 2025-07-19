@@ -37,7 +37,7 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 		Insurance:   input.Insurance,
 		Technician:  input.Technician,
 		Location:    input.Location,
-		Status:      input.StartDate,
+		Status:      input.Status,
 		Procedure:   input.Procedure,
 	}
 

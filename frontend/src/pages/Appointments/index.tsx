@@ -13,6 +13,8 @@ import ListCard from '../../core/components/ListCard';
 import { listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
+import ListSummary from '../../core/components/ListSummary';
+import dayjs from 'dayjs';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -24,6 +26,15 @@ function Appointments() {
   const handleSelectChange = (value: string) => {
     setSelected(value)
   };
+
+  const getHours = (stringDate: string) => {
+    const date = new Date(stringDate);
+
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${hours}:${minutes}`
+  }
 
   useEffect(() => {
     try {
@@ -37,7 +48,6 @@ function Appointments() {
       fetchAppointmentsList();
     } catch (error: any) {
       if (error === "unauthorized")
-
       navigate('/')
     }
   }, [])
@@ -63,6 +73,7 @@ function Appointments() {
         </Wrapper>
         <DashboardWrapper>
           <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+          <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]}/>
           {loading ? <p>Loading...</p> : (
             <DashboardList>
               {
@@ -71,8 +82,8 @@ function Appointments() {
                   appointments?.data.map((appointment: TAppointmentItem) => (
                     <ListCard 
                       key={appointment.uuid}
-                      endDate={appointment.end_date}
-                      startDate={appointment.start_date}
+                      endDate={getHours(appointment.end_date)}
+                      startDate={getHours(appointment.start_date)}
                       insurance={appointment.patient.insurance}
                       location={appointment.location}
                       patientName={appointment.patient.name}
