@@ -10,20 +10,22 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import { listAppointments } from '../../core/services/appointmentsService';
+import { createAppointment, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
+import CreateEditModal from '../../core/components/CreateEditModal';
 
 function Appointments() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState('');
+  const [_, setSelected] = useState('');
   const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
-  
+  const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
+
   const handleSelectChange = (value: string) => {
     setSelected(value)
   };
@@ -36,6 +38,17 @@ function Appointments() {
 
     return `${hours}:${minutes}`
   }
+
+  const handleCreateAppointment = async (formData: any) => {
+    try {
+      await createAppointment(formData);
+      setCreateEditModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Erro ao criar agendamento", err);
+    }
+  };
+
 
   useEffect(() => {
     try {
@@ -55,23 +68,28 @@ function Appointments() {
 
   return (
     <Container>
+      <CreateEditModal onSave={handleCreateAppointment} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
       <SideBar>
           <SideBarButton text="Appointments" highlight/>
           <SideBarButton text="Patients" />
           <SideBarButton text="Settings"/>
       </SideBar>
+
       <Dashboard>
+
         <Header>
           <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleSelectChange}/>
           <HeaderInput />  
         </ Header>
+
         <Wrapper>
           <H1>Appointments</H1>
             <Div>
               <DateSelector />
-              <CreationEditButton text="New Appointment" highlight/>
+              <CreationEditButton text="New Appointment" highlight onClick={() => setCreateEditModalOpen(true)}/>
             </Div>
         </Wrapper>
+        
         <DashboardWrapper>
 
           <ListOptionsWrapper deleteSelection={rowSelection}>
@@ -104,9 +122,8 @@ function Appointments() {
               }
             </DashboardList>
           )}
-          
+
         </DashboardWrapper>
-        
       </Dashboard>
     </Container>
   );

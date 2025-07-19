@@ -19,11 +19,10 @@ function ListSummary({ fields, onChange }: ListSummaryProps) {
             <input type="checkbox" onChange={() => handleRowsSelected()}/>
             {
                 fields.map((field) => (
-                    <Column>
+                    <Column key={field}>
                         {field}
                     </Column>
                 ))
-                
             }
             <IconWrapper>
                 <PhoneIcon />
