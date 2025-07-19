@@ -30,6 +30,7 @@ func NewPatientRepository(db *mongo.Database) domain_repository.PatientRepositor
 func (f *PatientRepository) Create(ctx context.Context, input entity.Patient) error {
 	patientEntity := PatientModel{
 		Uuid:      input.Uuid,
+		UserUuid:  input.UserUuid,
 		Insurance: input.Insurance,
 		Name:      input.Name,
 		Phone:     input.Phone,

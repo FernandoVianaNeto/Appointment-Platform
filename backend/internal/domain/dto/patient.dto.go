@@ -2,6 +2,7 @@ package dto
 
 type CreatePatientInputDto struct {
 	Uuid      string  `json:"uuid"`
+	UserUuid  string  `json:"user_uuid"`
 	Name      string  `json:"name"`
 	Phone     string  `json:"phone"`
 	Email     *string `json:"email"`
