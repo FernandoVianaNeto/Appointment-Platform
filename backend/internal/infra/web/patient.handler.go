@@ -59,6 +59,15 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 func (s *Server) ListPatientHandler(ctx *gin.Context) {
 	var queryParams requests.ListPatientRequest
 
+	value := ctx.Value("user_uuid")
+
+	userUuid, ok := value.(string)
+
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "User not found in context"})
+		return
+	}
+
 	if err := ctx.ShouldBindUri(&queryParams); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
@@ -75,9 +84,12 @@ func (s *Server) ListPatientHandler(ctx *gin.Context) {
 	}
 
 	response, err := s.ListPatientUsecase.Execute(ctx, dto.ListPatientInputDto{
+		Name:        queryParams.Name,
+		Uuid:        queryParams.Uuid,
+		UserUuid:    userUuid,
 		Page:        page,
-		SearchInput: &queryParams.SearchTerm,
-		FilterType:  &queryParams.FilterType,
+		SearchInput: queryParams.SearchTerm,
+		FilterType:  queryParams.FilterType,
 	})
 
 	if err != nil {

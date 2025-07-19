@@ -29,9 +29,9 @@ func (u *ListPatientUsecase) Execute(ctx context.Context, input dto.ListPatientI
 		Metadata: defaultMetadata,
 	}
 
-	appointments, err := u.PatientRepository.List(ctx, input)
+	patients, err := u.PatientRepository.List(ctx, input)
 
-	if err != nil || len(appointments) == 0 {
+	if err != nil || len(patients) == 0 {
 		return defaultResponse, err
 	}
 
@@ -41,10 +41,18 @@ func (u *ListPatientUsecase) Execute(ctx context.Context, input dto.ListPatientI
 		return defaultResponse, err
 	}
 
-	metada := domain_response.GetMetadataParams(input.Page, allDocuments)
+	for _, patient := range patients {
+		response = append(response, domain_response.PatientData{
+			Name:      patient.Name,
+			Insurance: *patient.Insurance,
+			Phone:     patient.Phone,
+		})
+	}
+
+	metadata := domain_response.GetMetadataParams(input.Page, allDocuments)
 
 	return domain_response.ListPatientsResponse{
 		Data:     response,
-		Metadata: metada,
+		Metadata: metadata,
 	}, err
 }

@@ -12,6 +12,9 @@ type CreatePatientInputDto struct {
 
 type ListPatientInputDto struct {
 	Page        int     `json:"page"`
+	UserUuid    string  `json:"user_uuid"`
+	Name        *string `json:"name"`
+	Uuid        *string `json:"uuid"`
 	SearchInput *string `json:"search_input"`
 	FilterType  *string `json:"filter_type"`
 }
