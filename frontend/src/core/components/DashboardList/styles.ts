@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ScrollableList = styled.ul`
-  max-height: 100%;
+  max-height: 350px;
   overflow-y: auto;
   padding: 0;
   margin: 0;
@@ -26,5 +26,14 @@ export const ScrollableList = styled.ul`
 
   &::-webkit-scrollbar-track {
     background: #f0f0f0;
+  }
+
+  @media (min-width: 768px) {
+    max-height: 350px;
+  }
+
+  @media (min-height: 900px) {
+    max-height: 600px;
+    padding: 0;
   }
 `;

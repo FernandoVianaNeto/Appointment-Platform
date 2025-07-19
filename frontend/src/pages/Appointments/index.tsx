@@ -5,7 +5,7 @@ import HeaderInput from '../../core/components/HeaderInput';
 import HeaderSelect from '../../core/components/HeaderSelect';
 import SideBar from '../../core/components/SideBar';
 import SideBarButton from '../../core/components/SideBarButton';
-import { Container, DashboardWrapper, Div, H1, Wrapper } from './styles';
+import { Container, DashboardWrapper, Div, H1, ListOptionsWrapper, Wrapper } from './styles';
 import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
@@ -14,6 +14,7 @@ import { listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
+import { MdDeleteOutline } from "react-icons/md";
 
 function Appointments() {
   const navigate = useNavigate();
@@ -72,7 +73,14 @@ function Appointments() {
             </Div>
         </Wrapper>
         <DashboardWrapper>
-          <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+
+          <ListOptionsWrapper deleteSelection={rowSelection}>
+            <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+            <button>
+              <MdDeleteOutline />
+            </button>
+          </ListOptionsWrapper>
+          
           <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
           {loading ? <p>Loading...</p> : (
             <DashboardList>
@@ -96,6 +104,7 @@ function Appointments() {
               }
             </DashboardList>
           )}
+          
         </DashboardWrapper>
         
       </Dashboard>

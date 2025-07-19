@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
+  margin-bottom: 0px;
 `;
 
 export const H1 = styled.h1`
@@ -19,6 +20,28 @@ export const Wrapper = styled.div`
 export const Div = styled.div`
   display: flex;
   gap: 20px;
+`;
+
+export const ListOptionsWrapper = styled.div<{
+  deleteSelection?: boolean;
+}>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    visibility: ${({ deleteSelection }) => (deleteSelection ? 'visible' : 'hidden')};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    color: red;
+    margin: 0;
+    padding: 0;
+  }
 `;
 
 export const DashboardWrapper = styled.div`
