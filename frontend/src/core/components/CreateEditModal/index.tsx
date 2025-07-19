@@ -13,16 +13,25 @@ function CreateEditModal ({ isOpen, onClose, onSave }: ModalProps) {
     e.preventDefault();
 
     const form = e.currentTarget;
+
+    console.log({
+      patientName: form.patientName.value,
+      insurance: form.insurance.value,
+      procedure: form.procedure.value,
+      technician: form.technician.value,
+      location: form.location.value,
+      start_date: `${form.startDate.value}T${form.startTime.value}`,
+      end_date: `${form.endDate.value}T${form.endTime.value}`,
+    })
+
     const data = {
       patientName: form.patientName.value,
       insurance: form.insurance.value,
       procedure: form.procedure.value,
       technician: form.technician.value,
       location: form.location.value,
-      startDate: form.startDate.value,
-      startTime: form.startTime.value,
-      endDate: form.endDate.value,
-      endTime: form.endTime.value,
+      startDate: `${form.startDate.value}T${form.startTime.value}`,
+      endDate: `${form.endDate.value}T${form.endTime.value}`,
     };
 
     onSave(data);
@@ -59,14 +68,14 @@ function CreateEditModal ({ isOpen, onClose, onSave }: ModalProps) {
               Start Date:
               <InputWrapper>
                 <input type="date" name="startDate" />
-                <input type="time" name="Time"/>
+                <input type="time" name="startTime"/>
               </InputWrapper>
             </label>
             <label>
             End Date:
               <InputWrapper>
                 <input type="date" name="endDate" />
-                <input type="time" name="Time"/>
+                <input type="time" name="endTime"/>
               </InputWrapper>
             </label>
           </DateWrapper>

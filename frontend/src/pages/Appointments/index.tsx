@@ -45,7 +45,7 @@ function Appointments() {
       setCreateEditModalOpen(false);
       window.location.reload();
     } catch (err) {
-      console.error("Erro ao criar agendamento", err);
+      console.error("Error on appointment creation", err);
     }
   };
 
@@ -68,7 +68,7 @@ function Appointments() {
 
   return (
     <Container>
-      <CreateEditModal onSave={handleCreateAppointment} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
+      <CreateEditModal onSave={(e) => handleCreateAppointment(e)} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
       <SideBar>
           <SideBarButton text="Appointments" highlight/>
           <SideBarButton text="Patients" />
