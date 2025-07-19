@@ -7,7 +7,6 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -53,7 +52,6 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 
 func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointmentInputDto) ([]entity.Appointment, error) {
 	filters := buildListFilters(input)
-	fmt.Println("FILTERS", filters, input)
 
 	limit := int64(domain_response.DEFAULT_ITEMS_PER_PAGE)
 	skip := int64((input.Page - 1)) * limit
@@ -76,7 +74,6 @@ func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointm
 
 	entitiesAppointment := make([]entity.Appointment, 0, len(appointments))
 	for _, appointment := range appointments {
-		fmt.Println(appointment)
 		entitiesAppointment = append(entitiesAppointment, entity.Appointment{
 			Uuid:        appointment.Uuid,
 			UserUuid:    appointment.UserUuid,

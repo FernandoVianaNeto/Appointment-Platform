@@ -10,16 +10,17 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import api from '../../core/services/api';
 import { listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
+import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 
 function Appointments() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState('')
-  const [appointmentsCount, setAppointmentsCount] = useState(0)
-  const [appointments, setAppointments] = useState()
-
+  const [selected, setSelected] = useState('');
+  const [appointments, setAppointments] = useState<TAppointmentResponse>();
+  const [totalItems, setTotalItems] = useState(0)
+  const [loading, setLoading] = useState(true);
+  
   const handleSelectChange = (value: string) => {
     setSelected(value)
   };
@@ -29,6 +30,8 @@ function Appointments() {
       async function fetchAppointmentsList() {
         const appointments = await listAppointments();
         setAppointments(appointments)
+        setTotalItems(appointments?.metadata.totalItems ?? 0)
+        setLoading(false)
       }
     
       fetchAppointmentsList();
@@ -59,28 +62,28 @@ function Appointments() {
             </Div>
         </Wrapper>
         <DashboardWrapper>
-          <span>Showing: <p>{appointmentsCount} appointments</p></span>
-          <DashboardList>
-            {
-              appointmentsCount === 0 ?
-              <p>No appoitments available</p> : 
-              // appointments.map((appointment) => {
-                // return 
-                <ListCard 
-                  key={"1"}
-                  endDate='06-07-2025T12:56:45'
-                  startDate='06-07-2025T12:56:45'
-                  insurance='Private'
-                  location='Rua professor gerson pinto, 251'
-                  patientName='Fernando Viana'
-                  procedure='Remoção capilar'
-                  status='Confirmed'
-                  technician='Fernando'
-                />
-              // })
-              
-            }
-          </DashboardList>
+          <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+          {loading ? <p>Loading...</p> : (
+            <DashboardList>
+              {
+                appointments?.data.length === 0 ?
+                <p>No appointments available</p> : 
+                  appointments?.data.map((appointment: TAppointmentItem) => (
+                    <ListCard 
+                      key={appointment.uuid}
+                      endDate={appointment.end_date}
+                      startDate={appointment.start_date}
+                      insurance={appointment.patient.insurance}
+                      location={appointment.location}
+                      patientName={appointment.patient.name}
+                      procedure={appointment.procedure}
+                      status={appointment.status}
+                      technician="Fernando"
+                    />
+                  ))
+              }
+            </DashboardList>
+          )}
         </DashboardWrapper>
         
       </Dashboard>

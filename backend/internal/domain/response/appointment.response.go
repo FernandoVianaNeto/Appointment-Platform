@@ -7,6 +7,7 @@ type Patient struct {
 }
 
 type AppointmentData struct {
+	Uuid      string  `json:"uuid"`
 	StartDate string  `json:"start_date"`
 	EndDate   string  `json:"end_date"`
 	Patient   Patient `json:"patient"`

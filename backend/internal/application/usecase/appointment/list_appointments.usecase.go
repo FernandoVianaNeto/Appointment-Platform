@@ -47,6 +47,7 @@ func (u *ListAppointmentUsecase) Execute(ctx context.Context, input dto.ListAppo
 
 		if err == nil {
 			response = append(response, domain_response.AppointmentData{
+				Uuid:      appointment.Uuid,
 				StartDate: appointment.StartDate,
 				EndDate:   appointment.EndDate,
 				Patient: domain_response.Patient{
