@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
-import CreateEditModal from '../../core/components/CreateEditModal';
+import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -49,7 +49,6 @@ function Appointments() {
     }
   };
 
-
   useEffect(() => {
     try {
       async function fetchAppointmentsList() {
@@ -68,7 +67,7 @@ function Appointments() {
 
   return (
     <Container>
-      <CreateEditModal onSave={(e) => handleCreateAppointment(e)} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
+      <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
       <SideBar>
           <SideBarButton text="Appointments" highlight/>
           <SideBarButton text="Patients" />

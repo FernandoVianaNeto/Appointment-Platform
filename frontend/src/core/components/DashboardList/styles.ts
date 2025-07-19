@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
 export const ScrollableList = styled.ul`
-  max-height: 350px;
+  height: 350px;
   overflow-y: auto;
   padding: 0;
   margin: 0;
   list-style: none;
   width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
   p {
     display: flex;
