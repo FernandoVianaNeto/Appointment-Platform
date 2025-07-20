@@ -43,6 +43,7 @@ func (u *ListPatientUsecase) Execute(ctx context.Context, input dto.ListPatientI
 
 	for _, patient := range patients {
 		response = append(response, domain_response.PatientData{
+			Uuid:      patient.Uuid,
 			Name:      patient.Name,
 			Insurance: *patient.Insurance,
 			Phone:     patient.Phone,

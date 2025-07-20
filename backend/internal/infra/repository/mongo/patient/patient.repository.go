@@ -7,7 +7,6 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -78,8 +77,6 @@ func (f *PatientRepository) List(ctx context.Context, input dto.ListPatientInput
 			Email:     patient.Email,
 		})
 	}
-
-	fmt.Println(patientsEntity, "ENTITIES")
 
 	return patientsEntity, nil
 }
@@ -157,8 +154,6 @@ func buildListFilters(input dto.ListPatientInputDto) bson.M {
 	if input.Name != nil {
 		filters["name"] = bson.M{"$regex": *input.Name, "$options": "i"}
 	}
-
-	fmt.Println("FILTERS", filters, &input.Name)
 
 	if input.Uuid != nil {
 		filters["uuid"] = bson.M{"$regex": *input.Uuid, "$options": "i"}

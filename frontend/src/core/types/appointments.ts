@@ -1,3 +1,5 @@
+import type { TPaginationMetadata } from "./paginationMetadata";
+
 export type TAppointmentItem = {
     uuid: string;
     end_date: string;
@@ -12,15 +14,8 @@ export type TAppointmentItem = {
     status: string;
 };
 
-export type TAppointmentMetadata = {
-    currentPage: number;
-    next: number;
-    total: number;
-    totalItems: number;
-}
-
 export type TAppointmentResponse = {
     data: TAppointmentItem[];
-    metadata: TAppointmentMetadata
+    metadata: TPaginationMetadata
 }
 

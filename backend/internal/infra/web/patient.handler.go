@@ -68,7 +68,7 @@ func (s *Server) ListPatientHandler(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindUri(&queryParams); err != nil {
+	if err := ctx.ShouldBindQuery(&queryParams); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
 	}

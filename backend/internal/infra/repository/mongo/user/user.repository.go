@@ -7,7 +7,6 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	"context"
 	"errors"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -121,8 +120,6 @@ func (f *UserRepository) UpdateByUuid(ctx context.Context, input dto.UpdateUserI
 	if input.Name != nil {
 		setFields["name"] = *input.Name
 	}
-
-	fmt.Println(setFields, len(setFields))
 
 	if len(setFields) > 0 {
 		update := bson.M{

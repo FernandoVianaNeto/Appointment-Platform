@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { usePatientSearch } from "../../hooks/usePatientSearch";
 import { DateWrapper, InputWrapper, ModalContainer, Overlay } from "./styles";
+import { listPatients } from "../../services/patientService";
+import type { TPatientData } from "../../types/patient";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,7 +12,8 @@ interface ModalProps {
 function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
   if (!isOpen) return null;
   const [name, setName] = useState("");
-  const { results, loading, show, setShow } = usePatientSearch(name);
+  const [show, setShow] = useState(false);
+  const [recommendedPatients, setRecommendedPatients] = useState<TPatientData[]>([])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,8 +32,21 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
   };
 
   useEffect(() => {
-    
-  }, [show])
+    const timeoutId = setTimeout(() => {
+      async function getPatientsByName() {
+        if (name.trim() === "") {
+          return;
+        }
+        const result = await listPatients(name);
+        console.log("RESULT", result);
+        setRecommendedPatients(result.data);
+      }
+  
+      getPatientsByName();
+    }, 300);
+  
+    return () => clearTimeout(timeoutId);
+  }, [name]);
 
   return (
     <Overlay>
@@ -49,10 +64,14 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
                   setName(e.target.value);
                   setShow(true);
                 }}
-                onBlur={() => setTimeout(() => setShow(false), 200)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget)) {
+                    setTimeout(() => setShow(false), 150);
+                  }
+                }}
                 onFocus={() => name && setShow(true)}
               />
-              {show && results.length > 0 && (
+              {show && recommendedPatients?.length > 0 && (
                 <ul style={{
                   marginTop: 4,
                   padding: 0,
@@ -67,7 +86,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
                   zIndex: 1000,
                   width: '100%'
                 }}>
-                  {results.map((patient, index) => (
+                  {recommendedPatients.map((patient, index) => (
                     <li
                       key={patient.uuid || index}
                       style={{ padding: '10px', cursor: 'pointer' }}
