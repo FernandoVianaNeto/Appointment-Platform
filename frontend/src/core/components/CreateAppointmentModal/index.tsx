@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DateWrapper, InputWrapper, ModalContainer, Overlay } from "./styles";
 import { listPatients } from "../../services/patientService";
 import type { TPatientData } from "../../types/patient";
+import SuggestionDropdown from "../SuggestionDropdown";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,21 +12,35 @@ interface ModalProps {
 
 function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
   if (!isOpen) return null;
-  const [name, setName] = useState("");
-  const [show, setShow] = useState(false);
+  const [name, setName] = useState<string>("");
+  const [show, setShow] = useState<boolean>(false);
   const [recommendedPatients, setRecommendedPatients] = useState<TPatientData[]>([])
+  const [selectedPatient, setSelectedPatient] = useState<TPatientData>()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    if (selectedPatient === undefined || 
+      form.insurance.value === undefined || 
+      form.procedure.value === undefined || 
+      form.technician.value === undefined || 
+      form.startDate.value === undefined ||
+      form.startTime.value == undefined ||
+      form.endDate.value == undefined ||
+      form.endTime.value == undefined 
+    ) {
+      throw new Error('Could not save appointment. Missing Required fields')
+    }
+
     const data = {
-      patientName: form.patientName.value,
+      patient_uuid: selectedPatient?.uuid,
       insurance: form.insurance.value,
       procedure: form.procedure.value,
       technician: form.technician.value,
       location: form.location.value,
-      startDate: `${form.startDate.value}T${form.startTime.value}`,
-      endDate: `${form.endDate.value}T${form.endTime.value}`,
+      start_date: `${form.startDate.value}T${form.startTime.value}`,
+      end_date: `${form.endDate.value}T${form.endTime.value}`,
     };
 
     onSave(data);
@@ -38,7 +53,6 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
           return;
         }
         const result = await listPatients(name);
-        console.log("RESULT", result);
         setRecommendedPatients(result.data);
       }
   
@@ -55,7 +69,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
         <form method="post" onSubmit={handleSubmit}>
           <div style={{ position: 'relative' }}>
             <label>
-              Patient Name:
+              Patient Name*:
               <input
                 type="text"
                 name="patientName"
@@ -70,68 +84,55 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
                   }
                 }}
                 onFocus={() => name && setShow(true)}
+                className="patient-input"
               />
-              {show && recommendedPatients?.length > 0 && (
-                <ul style={{
-                  marginTop: 4,
-                  padding: 0,
-                  listStyle: 'none',
-                  border: '1px solid #ccc',
-                  borderRadius: 8,
-                  maxHeight: 150,
-                  overflowY: 'auto',
-                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                  position: 'absolute',
-                  backgroundColor: 'white',
-                  zIndex: 1000,
-                  width: '100%'
-                }}>
-                  {recommendedPatients.map((patient, index) => (
-                    <li
-                      key={patient.uuid || index}
-                      style={{ padding: '10px', cursor: 'pointer' }}
-                      onMouseDown={() => {
-                        setName(patient.name);
-                        setShow(false);
-                      }}
-                    >
-                      {patient.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </label>
+            {show && recommendedPatients?.length > 0 && (
+              <SuggestionDropdown
+                results={recommendedPatients}
+                onSelect={(selectedName) => {
+                  setSelectedPatient(selectedName);
+                  setName(selectedName.name)
+                  setShow(false);
+                }}
+              />
+            )}
           </div>
+
           <label>
-            Insurance:
-            <input type="text" name="insurance" />
+            Insurance*:
+            <input className="insurance-input" type="text" name="insurance" />
           </label>
+
           <label>
-            Procedure:
-            <input type="text" name="procedure" />
+            Procedure*:
+            <input className="procedure-input" type="text" name="procedure" />
           </label>
+
           <label>
-            Technician:
-            <input type="text" name="technician" />
+            Technician*:
+            <input className="technician-input" type="text" name="technician" />
           </label>
+
           <label>
-            Location:
-            <input type="text" name="location" />
+            Location*:
+            <input className="location-input" type="text" name="location" />
           </label>
 
           <DateWrapper>
             <label>
-              Start Date:
+              Start Date*:
               <InputWrapper>
-                <input type="date" name="startDate" />
-                <input type="time" name="startTime"/>
+                <input className="start-date-input" type="date" name="startDate" />
+                <input className="start-date-time-input" type="time" name="startTime"/>
               </InputWrapper>
             </label>
+
             <label>
-            End Date:
+              End Date*:
               <InputWrapper>
-                <input type="date" name="endDate" />
-                <input type="time" name="endTime"/>
+                <input className="end-date-input" type="date" name="endDate" />
+                <input className="end-date-time-input" type="time" name="endTime"/>
               </InputWrapper>
             </label>
           </DateWrapper>
@@ -140,6 +141,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
             <button type="submit">Save</button>
             <button type="button" onClick={onClose}>Cancel</button>
           </div>
+
         </form>
       </ModalContainer>
     </Overlay>

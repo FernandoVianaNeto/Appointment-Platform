@@ -28,6 +28,17 @@ func (s *Server) CreateAppointmentHandler(ctx *gin.Context) {
 		return
 	}
 
+	if form.Get("start_date") == "" ||
+		form.Get("end_date") == "" ||
+		form.Get("patient_uuid") == "" ||
+		form.Get("insurance") == "" ||
+		form.Get("technician") == "" ||
+		form.Get("location") == "" ||
+		form.Get("procedure") == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing required fields"})
+		return
+	}
+
 	createAppointmentDto := dto.CreateAppointmentInputDto{
 		UserUuid:    userUuid,
 		StartDate:   form.Get("start_date"),

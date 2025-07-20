@@ -1,13 +1,23 @@
 import styled from "styled-components";
 
-export const Container = styled.button<{
+export const Ul = styled.ul<{
     highlight?: boolean
 }>`
+    margin-top: 4px;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-height: 150;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    background-color: white;
+    z-index: 1000;
     width: 100%;
-    cursor: pointer;
-    background-color: ${({ theme, highlight }) => highlight ? theme.colors.highlightButton : theme.colors.primary };
-    border: none;
-    padding: 20px 10px;
-    color: ${({ theme }) => theme.colors.white };
-    font-weight: 500;
+
+    li {
+        padding: 10px;
+        cursor: pointer;
+    }
 `;
