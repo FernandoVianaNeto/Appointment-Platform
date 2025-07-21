@@ -17,6 +17,7 @@ import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
 import LoadingSpinner from '../../core/components/Loading';
+import { getHours } from '../../core/helpers/getHours';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -30,15 +31,6 @@ function Appointments() {
   const handleSelectChange = (value: string) => {
     setSelected(value)
   };
-
-  const getHours = (stringDate: string) => {
-    const date = new Date(stringDate);
-
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${hours}:${minutes}`
-  }
 
   const handleCreateAppointment = async (formData: any) => {
     try {
