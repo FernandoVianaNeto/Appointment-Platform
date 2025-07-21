@@ -12,7 +12,7 @@ import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
 import { createAppointment, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
-import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
+import type { TAppointmentItem } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
@@ -26,11 +26,13 @@ function Appointments() {
   const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
   const [filterDate, setFilterDate] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>();
-  const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
   const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
+  const [hasMoreAppointments, setHasMoreAppointments] = useState(true);
+  const [page, setPage] = useState(1);
+  const [appointments, setAppointments] = useState<TAppointmentItem[]>([]);
 
   const handleFilterTypeSelected = (value: string) => {
     setFilterTypeSelected(value)
@@ -46,13 +48,33 @@ function Appointments() {
     }
   };
 
-  const getAppointmentListByFilters = async () => {
+  const getAppointmentListByFilters = async (customPage = page) => {
     setLoading(true);
-    const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected, date: filterDate });
-    setAppointments(appointments);
-    setTotalItems(appointments?.metadata.totalItems ?? 0);
-    setLoading(false);
-  }
+    try {
+      const appointmentsResponse = await listAppointments({ 
+        page: customPage, 
+        searchTerm, 
+        filterType: filterTypeSelected, 
+        date: filterDate 
+      });
+  
+      if (customPage === 1) {
+        setAppointments(appointmentsResponse.data);
+      } else {
+        setAppointments(prev => [...prev, ...appointmentsResponse.data]);
+      }
+  
+      setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
+      setPage(appointmentsResponse?.metadata.next);
+      setHasMoreAppointments(appointmentsResponse?.metadata.next !== 0);
+    } catch (error: any) {
+      console.error(error);
+      // navigate('/login');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const handleSubmitFilter = async () => {
       setLoading(true);
@@ -64,14 +86,23 @@ function Appointments() {
     }
   };
 
+  const handleGetNextPageAppointments = async () => {
+      setLoading(true);
+      try {
+        getAppointmentListByFilters();
+      }
+      catch (error: any) {
+      if (error === "unauthorized") navigate('/login');
+    }
+  };
+
   useEffect(() => {
     const now = dayjs().format('YYYY-MM-DD');
     setFilterDate(now)
     try {
       async function fetchAppointmentsList() {
-        const appointments = await listAppointments({ date: now });
-        setAppointments(appointments);
-        setTotalItems(appointments?.metadata.totalItems ?? 0);
+        const appointmentsResponse = await listAppointments({ page: page, date: now });
+        setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
         setLoading(false);
       }
     
@@ -86,13 +117,19 @@ function Appointments() {
       initialLoad.current = false;
       return;
     }
-
-    try {
-      setLoading(true);
-      getAppointmentListByFilters();
-    } catch (error: any) {
-      if (error === "unauthorized") navigate('/');
-    }
+  
+    const fetchFilteredAppointments = async () => {
+      try {
+        setLoading(true);
+        setAppointments([]);
+        setPage(1);
+        await getAppointmentListByFilters(1);
+      } catch (error: any) {
+        if (error === "unauthorized") navigate('/');
+      }
+    };
+  
+    fetchFilteredAppointments();
   }, [filterDate]);
 
   return (
@@ -128,11 +165,15 @@ function Appointments() {
           
           <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
           {loading ? <LoadingSpinner /> : (
-            <DashboardList noContent={appointments?.data.length === 0}>
+            <DashboardList 
+              noContent={appointments?.length === 0}
+              hasMore={hasMoreAppointments}
+              fetchMoreData={handleGetNextPageAppointments}
+            >
               {
-                appointments?.data.length === 0 ?
+                appointments?.length === 0 ?
                 <p>No appointments available</p> : 
-                  appointments?.data.map((appointment: TAppointmentItem) => (
+                  appointments?.map((appointment: TAppointmentItem) => (
                     <ListCard 
                       key={appointment.uuid}
                       endDate={getHours(appointment.end_date)}

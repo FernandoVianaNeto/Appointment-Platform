@@ -61,7 +61,7 @@ func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointm
 	opts := options.Find()
 	opts.SetLimit(limit)
 	opts.SetSkip(skip)
-	opts.SetSort(bson.M{"created_at": -1})
+	opts.SetSort(bson.M{"start_date": 1})
 
 	cursor, err := f.collection.Find(ctx, filters, opts)
 	if err != nil {

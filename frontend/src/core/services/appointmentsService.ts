@@ -1,26 +1,30 @@
 import api from './api';
 
 interface ListAppointmentsFilters {
+  page: string|number,
   searchTerm?: string, 
   filterType?: string,
   date?: string,
 }
 
-export async function listAppointments(input?: ListAppointmentsFilters): Promise<any> {
+export async function listAppointments(input: ListAppointmentsFilters): Promise<any> {
   try {
     const token = localStorage.getItem('token');
 
-    let endpoint = '/appointment/list';
+    console.log(input);
 
-    if (input?.searchTerm || input?.filterType || input?.date) {
-      const query = [];
-    
+    let endpoint = '/appointment/list';
+    const query = [];
+    query.push(`page=${encodeURIComponent(input.page)}`);
+
+    if (input.searchTerm || input.filterType || input.date || input?.page ) {
       if (input.searchTerm) query.push(`searchTerm=${encodeURIComponent(input.searchTerm)}`);
       if (input.filterType) query.push(`filterType=${encodeURIComponent(input.filterType)}`);
       if (input.date) query.push(`date=${encodeURIComponent(input.date)}`);
       endpoint += `?${query.join('&')}`;
     }
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
+    console.log('RES', res.data)
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
