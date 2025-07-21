@@ -16,6 +16,7 @@ import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/ap
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
+import LoadingSpinner from '../../core/components/Loading';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -98,8 +99,8 @@ function Appointments() {
             </button>
           </ListOptionsWrapper>
           
-          <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
-          {loading ? <p>Loading...</p> : (
+          <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
+          {loading ? <LoadingSpinner /> : (
             <DashboardList>
               {
                 appointments?.data.length === 0 ?
