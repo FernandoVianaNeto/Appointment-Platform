@@ -12,6 +12,15 @@ import (
 func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
 
+	value := ctx.Value("user_uuid")
+
+	userUuid, ok := value.(string)
+
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "User not found in context"})
+		return
+	}
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
 		return
@@ -29,6 +38,7 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 	insurance := form.Get("insurance")
 
 	createPatientDto := dto.CreatePatientInputDto{
+		UserUuid:  userUuid,
 		Email:     &email,
 		Name:      form.Get("name"),
 		Phone:     form.Get("phone"),
@@ -49,7 +59,16 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 func (s *Server) ListPatientHandler(ctx *gin.Context) {
 	var queryParams requests.ListPatientRequest
 
-	if err := ctx.ShouldBindUri(&queryParams); err != nil {
+	value := ctx.Value("user_uuid")
+
+	userUuid, ok := value.(string)
+
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "User not found in context"})
+		return
+	}
+
+	if err := ctx.ShouldBindQuery(&queryParams); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
 		return
 	}
@@ -65,9 +84,12 @@ func (s *Server) ListPatientHandler(ctx *gin.Context) {
 	}
 
 	response, err := s.ListPatientUsecase.Execute(ctx, dto.ListPatientInputDto{
+		Name:        queryParams.Name,
+		Uuid:        queryParams.Uuid,
+		UserUuid:    userUuid,
 		Page:        page,
-		SearchInput: &queryParams.SearchTerm,
-		FilterType:  &queryParams.FilterType,
+		SearchInput: queryParams.SearchTerm,
+		FilterType:  queryParams.FilterType,
 	})
 
 	if err != nil {

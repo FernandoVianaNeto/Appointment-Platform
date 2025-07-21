@@ -1,9 +1,11 @@
 package requests
 
 type ListPatientRequest struct {
-	Page       string `form:"page"`
-	SearchTerm string `form:"searchTerm"`
-	FilterType string `form:"filterType"`
+	Uuid       *string `form:"uuid"`
+	Name       *string `form:"name"`
+	Page       string  `form:"page"`
+	SearchTerm *string `form:"searchTerm"`
+	FilterType *string `form:"filterType"`
 }
 
 type DeletePatientRequest struct {

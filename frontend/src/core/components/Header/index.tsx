@@ -4,14 +4,15 @@ import { IoMdSettings } from "react-icons/io";
 
 type Props = {
   children: React.ReactNode;
+  onSubmit: () => void;
 };
 
-function Header({children}: Props) {
+function Header({children, onSubmit }: Props) {
   return (
     <Container>
         <Wrapper>
             {children}
-            <SearchButton> 
+            <SearchButton onClick={() => onSubmit()}> 
               Search 
             </SearchButton>
         </Wrapper>

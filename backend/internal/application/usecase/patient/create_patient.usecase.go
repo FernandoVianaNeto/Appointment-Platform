@@ -27,6 +27,7 @@ func (u *CreatePatientUsecase) Execute(ctx context.Context, input dto.CreatePati
 
 	entity := entity.NewPatient(
 		patientUuid,
+		input.UserUuid,
 		input.Name,
 		input.Phone,
 		input.Insurance,

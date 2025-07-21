@@ -30,6 +30,7 @@ func NewPatientRepository(db *mongo.Database) domain_repository.PatientRepositor
 func (f *PatientRepository) Create(ctx context.Context, input entity.Patient) error {
 	patientEntity := PatientModel{
 		Uuid:      input.Uuid,
+		UserUuid:  input.UserUuid,
 		Insurance: input.Insurance,
 		Name:      input.Name,
 		Phone:     input.Phone,
@@ -59,12 +60,25 @@ func (f *PatientRepository) List(ctx context.Context, input dto.ListPatientInput
 	}
 	defer cursor.Close(ctx)
 
-	var patients []entity.Patient
+	var patients []PatientModel
 	if err := cursor.All(ctx, &patients); err != nil {
 		return nil, err
 	}
 
-	return patients, nil
+	patientsEntity := make([]entity.Patient, 0, len(patients))
+	for _, patient := range patients {
+		patientsEntity = append(patientsEntity, entity.Patient{
+			Uuid:      patient.Uuid,
+			UserUuid:  patient.UserUuid,
+			Name:      patient.Name,
+			Phone:     patient.Phone,
+			Insurance: patient.Insurance,
+			Address:   patient.Address,
+			Email:     patient.Email,
+		})
+	}
+
+	return patientsEntity, nil
 }
 
 func (f *PatientRepository) Edit(ctx context.Context, input dto.EditPatientInputDto) error {
@@ -133,7 +147,17 @@ func (f *PatientRepository) CountDocuments(ctx context.Context, input dto.ListPa
 }
 
 func buildListFilters(input dto.ListPatientInputDto) bson.M {
-	var filters = bson.M{}
+	var filters = bson.M{
+		"user_uuid": input.UserUuid,
+	}
+
+	if input.Name != nil {
+		filters["name"] = bson.M{"$regex": *input.Name, "$options": "i"}
+	}
+
+	if input.Uuid != nil {
+		filters["uuid"] = bson.M{"$regex": *input.Uuid, "$options": "i"}
+	}
 
 	if input.SearchInput != nil {
 		if input.FilterType != nil {

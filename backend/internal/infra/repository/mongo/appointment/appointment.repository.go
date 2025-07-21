@@ -7,6 +7,8 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
+	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -138,35 +140,46 @@ func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
 		"user_uuid": input.UserUuid,
 	}
 
-	// var start, end time.Time
-	// if input.Date == nil {
-	// 	now := time.Now()
-	// 	start = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	// 	end = start.Add(24 * time.Hour)
-	// } else {
-	// 	start = time.Date(input.Date.Year(), input.Date.Month(), input.Date.Day(), 0, 0, 0, 0, input.Date.Location())
-	// 	end = start.Add(24 * time.Hour)
-	// }
+	var start, end time.Time
+	if input.Date == nil {
+		now := time.Now()
+		start = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+		end = start.Add(24 * time.Hour)
+	} else {
+		start = time.Date(input.Date.Year(), input.Date.Month(), input.Date.Day(), 0, 0, 0, 0, input.Date.Location())
+		end = start.Add(24 * time.Hour)
+	}
 
-	// filters["start_date"] = bson.M{
-	// 	"$gte": start,
-	// 	"$lt":  end,
-	// }
+	filters["start_date"] = bson.M{
+		"$gte": start,
+		"$lt":  end,
+	}
 
-	// if input.SearchInput != nil {
-	// 	if input.FilterType != nil {
-	// 		filters[*input.FilterType] = bson.M{
-	// 			"$regex":   *input.SearchInput,
-	// 			"$options": "i",
-	// 		}
-	// 	} else {
-	// 		filters["$or"] = bson.A{
-	// 			bson.M{"technician": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-	// 			bson.M{"patient_name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-	// 			bson.M{"insurances": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
-	// 		}
-	// 	}
-	// }
+	fmt.Println(input)
+
+	if input.SearchInput != nil {
+		if input.FilterType != nil {
+			field := *input.FilterType
+			if field == "technician" || field == "patient_name" || field == "insurances" {
+				filters[field] = bson.M{
+					"$regex":   *input.SearchInput,
+					"$options": "i",
+				}
+			} else {
+				filters["$or"] = bson.A{
+					bson.M{"technician": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+					bson.M{"patient_name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+					bson.M{"procedure": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+				}
+			}
+		} else {
+			filters["$or"] = bson.A{
+				bson.M{"technician": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+				bson.M{"patient_name": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+				bson.M{"procedure": bson.M{"$regex": *input.SearchInput, "$options": "i"}},
+			}
+		}
+	}
 
 	return filters
 }

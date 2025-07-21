@@ -10,34 +10,58 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import { listAppointments } from '../../core/services/appointmentsService';
+import { createAppointment, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
+import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
+import LoadingSpinner from '../../core/components/Loading';
+import { getHours } from '../../core/helpers/getHours';
 
 function Appointments() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState('');
+  const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
-  
-  const handleSelectChange = (value: string) => {
-    setSelected(value)
+  const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
+
+  const handleFilterTypeSelected = (value: string) => {
+    setFilterTypeSelected(value)
   };
 
-  const getHours = (stringDate: string) => {
-    const date = new Date(stringDate);
+  const handleCreateAppointment = async (formData: any) => {
+    try {
+      await createAppointment(formData);
+      setCreateEditModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error on appointment creation", err);
+    }
+  };
 
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${hours}:${minutes}`
+  const handleSubmitFilter = async () => {
+    try {
+      async function fetchAppointmentsList() {
+        const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected });
+        console.log("APPOINTMENTS", appointments);
+        setAppointments(appointments)
+        setTotalItems(appointments?.metadata.totalItems ?? 0)
+        setLoading(false)
+      }
+    
+      fetchAppointmentsList();
+    } catch (error: any) {
+      if (error === "unauthorized")
+      navigate('/')
+    }
   }
 
   useEffect(() => {
+    console.log('RELOADED')
     try {
       async function fetchAppointmentsList() {
         const appointments = await listAppointments();
@@ -55,25 +79,28 @@ function Appointments() {
 
   return (
     <Container>
+      <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
       <SideBar>
           <SideBarButton text="Appointments" highlight/>
           <SideBarButton text="Patients" />
           <SideBarButton text="Settings"/>
       </SideBar>
+
       <Dashboard>
-        <Header>
-          <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleSelectChange}/>
-          <HeaderInput />  
+        <Header onSubmit={handleSubmitFilter}>
+          <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleFilterTypeSelected}/>
+          <HeaderInput onChange={(searchTerm) => setSearchTerm(searchTerm)}/>  
         </ Header>
+
         <Wrapper>
           <H1>Appointments</H1>
             <Div>
               <DateSelector />
-              <CreationEditButton text="New Appointment" highlight/>
+              <CreationEditButton text="New Appointment" highlight onClick={() => setCreateEditModalOpen(true)}/>
             </Div>
         </Wrapper>
+  
         <DashboardWrapper>
-
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
             <button>
@@ -81,8 +108,8 @@ function Appointments() {
             </button>
           </ListOptionsWrapper>
           
-          <ListSummary fields={["Time", "Patiet Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
-          {loading ? <p>Loading...</p> : (
+          <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
+          {loading ? <LoadingSpinner /> : (
             <DashboardList>
               {
                 appointments?.data.length === 0 ?
@@ -104,9 +131,8 @@ function Appointments() {
               }
             </DashboardList>
           )}
-          
+
         </DashboardWrapper>
-        
       </Dashboard>
     </Container>
   );
