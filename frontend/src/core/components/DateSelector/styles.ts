@@ -28,5 +28,6 @@ export const TodayText = styled.span`
     display: flex;
     align-items: center;
     font-size: 12px;
+    cursor: pointer;
 `;
 
