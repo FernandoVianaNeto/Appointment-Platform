@@ -5,34 +5,36 @@ import { login } from '../../core/services/authService';
 
 function Login() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [_, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-
+  
     try {
       await login(email, password);
-      navigate('/home');
+      navigate('/appointments');
     } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      console.error('Login error:', err);
+  
+      if (err instanceof Error && err.message === 'Invalid email or password') {
+        console.log(err)
+        setError(true);
+      } else {
+        alert('Unexpected error occurred. Please try again later.');
+      }
     }
   };
 
   return (
     <Container>
-      <Form>
-        <Title>Appointment Plataform</Title>
-        <Input type="text" placeholder="Email" onChange={e => setEmail(e.target.value)}/>
-        <Input type="password" placeholder="Password"  onChange={e => setPassword(e.target.value)}/>
-        <Button onClick={handleSubmit}>{loading ? "Logging..." : "Login"}</Button>
+      <Form onSubmit={handleSubmit}>
+        <Title>Appointment Platform</Title>
+        <Input type="text" placeholder="Email" onChange={e => setEmail(e.target.value)} />
+        <Input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+        <Button type="submit">Login</Button>
+        {error && <p>Incorrect Email or Password</p>}
       </Form>
     </Container>
   );

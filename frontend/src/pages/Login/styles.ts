@@ -15,6 +15,15 @@ export const Form = styled.form`
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   width: 300px;
+
+  p {
+    color: ${({ theme }) => theme.colors.highlightButton};
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+  }
 `;
 
 export const Title = styled.h2`

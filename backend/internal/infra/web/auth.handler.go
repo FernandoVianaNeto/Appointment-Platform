@@ -19,7 +19,7 @@ func (s *Server) AuthHandler(ctx *gin.Context) {
 	response, err := s.AuthUseCase.Execute(ctx, dto.AuthInputDto{Email: req.Email, Password: req.Password})
 
 	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
