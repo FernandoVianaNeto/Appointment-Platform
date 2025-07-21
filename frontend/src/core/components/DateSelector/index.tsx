@@ -32,10 +32,10 @@ function DateSelector({ onClick }: IDateSelectorProps) {
       <CircleButton onClick={goToPrevDay}>‹</CircleButton>
       <DateContainer>
         <strong>{selectedDate.format('MMM D, YYYY')}</strong>
-        <TodayText onClick={resetToToday}>
-          &nbsp;Today ▾
-        </TodayText>
       </DateContainer>
+      <TodayText onClick={resetToToday}>
+          &nbsp;Today
+        </TodayText>
       <CircleButton onClick={goToNextDay}>›</CircleButton>
     </Wrapper>
   );

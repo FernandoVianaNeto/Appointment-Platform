@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
     font-family: 'sans-serif';
     min-width: 250px;
 `;
@@ -12,16 +12,18 @@ export const CircleButton = styled.button`
     width: 32px;
     height: 32px;
     border-radius: 40px;
-    border: 1px solid ${({theme}) => theme.colors.primary};
+    border: none;
     background: transparent;
     cursor: pointer;
-    font-size: 16px 32px;
+    font-size: 20px;
+    color: ${({ theme }) => theme.colors.highlightButton};
 `;
 
 export const DateContainer = styled.div`
     display: flex;
     align-items: center;
     font-size: 12px;
+    color: ${({ theme }) => theme.colors.primary};
 `;
 
 export const TodayText = styled.span`
@@ -29,5 +31,6 @@ export const TodayText = styled.span`
     align-items: center;
     font-size: 12px;
     cursor: pointer;
+    padding: 5px;
 `;
 

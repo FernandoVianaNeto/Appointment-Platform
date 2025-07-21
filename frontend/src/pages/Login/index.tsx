@@ -2,20 +2,15 @@ import { useState } from 'react';
 import { Container, Form, Input, Button, Title } from './styles';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../core/services/authService';
-import LoadingSpinner from '../../core/components/Loading';
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("before preventDefault", e);
     e.preventDefault();
-    console.log("after preventDefault");
-    setLoading(true);
   
     try {
       await login(email, password);
@@ -29,8 +24,6 @@ function Login() {
       } else {
         alert('Unexpected error occurred. Please try again later.');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
