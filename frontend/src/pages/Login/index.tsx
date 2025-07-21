@@ -20,7 +20,6 @@ function Login() {
       await login(email, password);
       navigate('/home');
     } catch (err: any) {
-      console.log("ERROR", err)
       setError(err.message);
     } finally {
       setLoading(false);

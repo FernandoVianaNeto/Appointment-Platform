@@ -92,6 +92,7 @@ func (s *Server) ListAppointmentsHandler(ctx *gin.Context) {
 		Page:        page,
 		SearchInput: &queryParams.SearchTerm,
 		FilterType:  &queryParams.FilterType,
+		Date:        &queryParams.Date,
 	})
 
 	if err != nil {

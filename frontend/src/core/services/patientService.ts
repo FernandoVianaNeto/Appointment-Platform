@@ -12,7 +12,6 @@ export async function listPatients(name?: string): Promise<any> {
     }
 
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
-    console.log('RESPONSE', res)
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {

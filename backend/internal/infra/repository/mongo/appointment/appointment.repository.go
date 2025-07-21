@@ -140,19 +140,20 @@ func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
 		"user_uuid": input.UserUuid,
 	}
 
-	var start, end time.Time
+	var start string
 	if input.Date == nil {
 		now := time.Now()
-		start = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-		end = start.Add(24 * time.Hour)
+		fmt.Println("NOW", now)
+		startUTC := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+		start = startUTC.Format("2006-01-02")
+
 	} else {
-		start = time.Date(input.Date.Year(), input.Date.Month(), input.Date.Day(), 0, 0, 0, 0, input.Date.Location())
-		end = start.Add(24 * time.Hour)
+		start = *input.Date
 	}
 
 	filters["start_date"] = bson.M{
-		"$gte": start,
-		"$lt":  end,
+		"$regex":   start,
+		"$options": "i",
 	}
 
 	fmt.Println(input)

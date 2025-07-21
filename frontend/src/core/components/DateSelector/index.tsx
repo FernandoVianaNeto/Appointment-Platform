@@ -1,20 +1,30 @@
 import { useState } from 'react';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { CircleButton, DateContainer, TodayText, Wrapper } from './styles';
 
-function DateSelector() {
+interface IDateSelectorProps {
+  onClick: (day: Dayjs) => void;
+}
+
+function DateSelector({ onClick }: IDateSelectorProps) {
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
   function goToPrevDay() {
-    setSelectedDate((prev) => prev.subtract(1, 'day'));
+    const newDate = selectedDate.subtract(1, 'day');
+    setSelectedDate(newDate);
+    onClick?.(newDate);
   }
-
+  
   function goToNextDay() {
-    setSelectedDate((prev) => prev.add(1, 'day'));
+    const newDate = selectedDate.add(1, 'day');
+    setSelectedDate(newDate);
+    onClick?.(newDate);
   }
-
+  
   function resetToToday() {
-    setSelectedDate(dayjs());
+    const today = dayjs();
+    setSelectedDate(today);
+    onClick?.(today);
   }
 
   return (

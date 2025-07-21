@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Dashboard from '../../core/components/Dashboard';
 import Header from '../../core/components/Header';
 import HeaderInput from '../../core/components/HeaderInput';
@@ -18,10 +18,13 @@ import { MdDeleteOutline } from "react-icons/md";
 import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
 import LoadingSpinner from '../../core/components/Loading';
 import { getHours } from '../../core/helpers/getHours';
+import dayjs from 'dayjs';
 
 function Appointments() {
   const navigate = useNavigate();
+  const initialLoad = useRef(true);
   const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
+  const [filterDate, setFilterDate] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
@@ -43,39 +46,54 @@ function Appointments() {
     }
   };
 
-  const handleSubmitFilter = async () => {
-    try {
-      async function fetchAppointmentsList() {
-        const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected });
-        console.log("APPOINTMENTS", appointments);
-        setAppointments(appointments)
-        setTotalItems(appointments?.metadata.totalItems ?? 0)
-        setLoading(false)
-      }
-    
-      fetchAppointmentsList();
-    } catch (error: any) {
-      if (error === "unauthorized")
-      navigate('/')
-    }
+  const getAppointmentListByFilters = async () => {
+    setLoading(true);
+    const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected, date: filterDate });
+    setAppointments(appointments);
+    setTotalItems(appointments?.metadata.totalItems ?? 0);
+    setLoading(false);
   }
 
+  const handleSubmitFilter = async () => {
+      setLoading(true);
+      try {
+        getAppointmentListByFilters();
+      }
+      catch (error: any) {
+      if (error === "unauthorized") navigate('/');
+    }
+  };
+
   useEffect(() => {
-    console.log('RELOADED')
+    const now = dayjs().format('YYYY-MM-DD');
+    setFilterDate(now)
     try {
       async function fetchAppointmentsList() {
-        const appointments = await listAppointments();
-        setAppointments(appointments)
-        setTotalItems(appointments?.metadata.totalItems ?? 0)
-        setLoading(false)
+        const appointments = await listAppointments({ date: now });
+        setAppointments(appointments);
+        setTotalItems(appointments?.metadata.totalItems ?? 0);
+        setLoading(false);
       }
     
       fetchAppointmentsList();
     } catch (error: any) {
-      if (error === "unauthorized")
-      navigate('/')
+      if (error === "unauthorized") navigate('/');
     }
   }, [])
+
+  useEffect(() => {
+    if (initialLoad.current) {
+      initialLoad.current = false;
+      return;
+    }
+
+    try {
+      setLoading(true);
+      getAppointmentListByFilters();
+    } catch (error: any) {
+      if (error === "unauthorized") navigate('/');
+    }
+  }, [filterDate]);
 
   return (
     <Container>
@@ -95,7 +113,7 @@ function Appointments() {
         <Wrapper>
           <H1>Appointments</H1>
             <Div>
-              <DateSelector />
+              <DateSelector onClick={(selectedDate) => setFilterDate(selectedDate.format('YYYY-MM-DD'))}/>
               <CreationEditButton text="New Appointment" highlight onClick={() => setCreateEditModalOpen(true)}/>
             </Div>
         </Wrapper>
@@ -110,7 +128,7 @@ function Appointments() {
           
           <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
           {loading ? <LoadingSpinner /> : (
-            <DashboardList>
+            <DashboardList noContent={appointments?.data.length === 0}>
               {
                 appointments?.data.length === 0 ?
                 <p>No appointments available</p> : 

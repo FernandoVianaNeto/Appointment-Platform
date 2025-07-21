@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const ScrollableList = styled.ul`
+export const ScrollableList = styled.ul<{
+  noContent?: boolean
+}>`
   height: 350px;
   overflow-y: auto;
   padding: 0;
@@ -14,6 +16,7 @@ export const ScrollableList = styled.ul`
     align-items: center;
     justify-content: center;
     font-weight: 400;
+    height: ${({ noContent }) => noContent && '350px'};
   }
 
   &::-webkit-scrollbar {
