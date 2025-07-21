@@ -7,6 +7,7 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -30,6 +31,12 @@ func NewAppointmentRepository(db *mongo.Database) domain_repository.AppointmentR
 }
 
 func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appointment) error {
+	_, err := f.GetByTimeAndTechnician(ctx, input.StartDate, input.EndDate, input.Technician)
+
+	if err != nil {
+		return errors.New("could not create a new appointment")
+	}
+
 	appointmentEntity := AppointmentModel{
 		UserUuid:    input.UserUuid,
 		Uuid:        input.Uuid,
@@ -43,13 +50,46 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 		Procedure:   input.Procedure,
 	}
 
-	_, err := f.collection.InsertOne(ctx, appointmentEntity)
+	_, err = f.collection.InsertOne(ctx, appointmentEntity)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (f *AppointmentRepository) GetByTimeAndTechnician(ctx context.Context, startDate string, endDate string, technician string) (*entity.Appointment, error) {
+	var model AppointmentModel
+
+	filter := bson.M{
+		"startDate": bson.M{
+			"$gte": startDate,
+			"$lte": endDate,
+		},
+		"technician": technician,
+	}
+
+	err := f.collection.FindOne(ctx, filter).Decode(&model)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := entity.Appointment{
+		Uuid:        model.Uuid,
+		UserUuid:    model.UserUuid,
+		StartDate:   model.StartDate,
+		EndDate:     model.EndDate,
+		PatientUuid: model.PatientUuid,
+		Insurance:   model.Insurance,
+		Technician:  model.Technician,
+		Location:    model.Location,
+		Status:      model.Status,
+		Procedure:   model.Procedure,
+	}
+
+	return &response, err
 }
 
 func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointmentInputDto) ([]entity.Appointment, error) {

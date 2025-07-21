@@ -48,7 +48,7 @@ function Appointments() {
     }
   };
 
-  const getAppointmentListByFilters = async (customPage = page) => {
+  const getAppointmentListByFilters = async (customPage = page, isNewFilter = false) => {
     setLoading(true);
     try {
       const appointmentsResponse = await listAppointments({ 
@@ -58,10 +58,14 @@ function Appointments() {
         date: filterDate 
       });
   
-      if (customPage === 1) {
+      if (isNewFilter || customPage === 1) {
         setAppointments(appointmentsResponse.data);
       } else {
-        setAppointments(prev => [...prev, ...appointmentsResponse.data]);
+        setAppointments(prev => {
+          const existingIds = new Set(prev.map(item => item.uuid));
+          const newItems = appointmentsResponse.data.filter((item: any) => !existingIds.has(item.uuid));
+          return [...prev, ...newItems];
+        });
       }
   
       setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
@@ -75,13 +79,12 @@ function Appointments() {
     }
   };
   
-
   const handleSubmitFilter = async () => {
-      setLoading(true);
-      try {
-        getAppointmentListByFilters();
-      }
-      catch (error: any) {
+    try {
+      setAppointments([]);
+      setPage(1);
+      await getAppointmentListByFilters(1, true);
+    } catch (error: any) {
       if (error === "unauthorized") navigate('/');
     }
   };
@@ -89,7 +92,7 @@ function Appointments() {
   const handleGetNextPageAppointments = async () => {
       setLoading(true);
       try {
-        getAppointmentListByFilters();
+        getAppointmentListByFilters(page, false);
       }
       catch (error: any) {
       if (error === "unauthorized") navigate('/login');
