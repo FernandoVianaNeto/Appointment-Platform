@@ -191,7 +191,7 @@ func NewUseCases(
 	listAppointmentUsecase := appointment_usecase.NewListAppointmentUseCase(appointmentRepository, patientRepository)
 	editAppointmentUsecase := appointment_usecase.NewEditAppointmentUseCase(appointmentRepository)
 	deleteAppointmentUsecase := appointment_usecase.NewDeleteAppointmentUseCase(appointmentRepository)
-	createAppointmentUsecase := appointment_usecase.NewCreateAppointmentUseCase(appointmentRepository)
+	createAppointmentUsecase := appointment_usecase.NewCreateAppointmentUseCase(appointmentRepository, patientRepository)
 
 	return UseCases{
 		userUseCase:                      userUsecase,

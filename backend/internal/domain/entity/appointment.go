@@ -6,6 +6,7 @@ type Appointment struct {
 	StartDate   string `json:"start_date"`
 	EndDate     string `json:"end_date"`
 	PatientUuid string `json:"patient_uuid"`
+	PatientName string `json:"patient_name"`
 	Insurance   string `json:"insurance"`
 	Technician  string `json:"technician"`
 	Location    string `json:"location"`
@@ -19,6 +20,7 @@ func NewAppointment(
 	startDate string,
 	endDate string,
 	patientUuid string,
+	patientName string,
 	insurance string,
 	technician string,
 	location string,
@@ -30,6 +32,7 @@ func NewAppointment(
 		StartDate:   startDate,
 		EndDate:     endDate,
 		PatientUuid: patientUuid,
+		PatientName: patientName,
 		Insurance:   insurance,
 		Technician:  technician,
 		Location:    location,

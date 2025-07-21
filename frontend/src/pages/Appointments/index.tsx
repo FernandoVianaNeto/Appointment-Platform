@@ -21,15 +21,16 @@ import { getHours } from '../../core/helpers/getHours';
 
 function Appointments() {
   const navigate = useNavigate();
-  const [_, setSelected] = useState('');
+  const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
   const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
 
-  const handleSelectChange = (value: string) => {
-    setSelected(value)
+  const handleFilterTypeSelected = (value: string) => {
+    setFilterTypeSelected(value)
   };
 
   const handleCreateAppointment = async (formData: any) => {
@@ -42,7 +43,25 @@ function Appointments() {
     }
   };
 
+  const handleSubmitFilter = async () => {
+    try {
+      async function fetchAppointmentsList() {
+        const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected });
+        console.log("APPOINTMENTS", appointments);
+        setAppointments(appointments)
+        setTotalItems(appointments?.metadata.totalItems ?? 0)
+        setLoading(false)
+      }
+    
+      fetchAppointmentsList();
+    } catch (error: any) {
+      if (error === "unauthorized")
+      navigate('/')
+    }
+  }
+
   useEffect(() => {
+    console.log('RELOADED')
     try {
       async function fetchAppointmentsList() {
         const appointments = await listAppointments();
@@ -68,10 +87,9 @@ function Appointments() {
       </SideBar>
 
       <Dashboard>
-
-        <Header>
-          <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleSelectChange}/>
-          <HeaderInput />  
+        <Header onSubmit={handleSubmitFilter}>
+          <HeaderSelect options={['All', 'Patient', 'Procedure']} onChange={handleFilterTypeSelected}/>
+          <HeaderInput onChange={(searchTerm) => setSearchTerm(searchTerm)}/>  
         </ Header>
 
         <Wrapper>
@@ -81,9 +99,8 @@ function Appointments() {
               <CreationEditButton text="New Appointment" highlight onClick={() => setCreateEditModalOpen(true)}/>
             </Div>
         </Wrapper>
-        
+  
         <DashboardWrapper>
-
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
             <button>
