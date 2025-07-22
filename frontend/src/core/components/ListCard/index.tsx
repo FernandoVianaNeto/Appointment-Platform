@@ -1,4 +1,4 @@
-import { AppointmentRow, IconWrapper, Column, Status, PhoneIcon } from './styles';
+import { AppointmentRow, IconWrapper, Column, Status, PhoneIcon, EditIcon } from './styles';
 import { CiCalendar } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { GiConfirmed } from "react-icons/gi";
@@ -16,9 +16,10 @@ type Props = {
   endDate: string,
   rowSelected?: boolean,
   onRowSelected?: (uuid: string) => void;
+  onEdit?: () => void;
 };
 
-function ListCard({ uuid, patientName, insurance, location, procedure, status, technician, startDate, endDate, rowSelected, onRowSelected }: Props) {
+function ListCard({ uuid, patientName, insurance, location, procedure, status, technician, startDate, endDate, rowSelected, onRowSelected, onEdit }: Props) {
   const [rowSelect, setRowSelected] = useState(rowSelected);
 
   useEffect(() => {
@@ -45,6 +46,11 @@ function ListCard({ uuid, patientName, insurance, location, procedure, status, t
       </Status>
       <IconWrapper>
         <PhoneIcon />
+      </IconWrapper>
+      <IconWrapper>
+        <button type="button" onClick={onEdit}>
+          <EditIcon /> 
+        </button>
       </IconWrapper>
     </AppointmentRow>
   );
