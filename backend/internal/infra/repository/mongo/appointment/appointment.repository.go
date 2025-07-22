@@ -7,7 +7,6 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -33,9 +32,9 @@ func NewAppointmentRepository(db *mongo.Database) domain_repository.AppointmentR
 func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appointment) error {
 	_, err := f.GetByTimeAndTechnician(ctx, input.StartDate, input.EndDate, input.Technician)
 
-	if err != nil {
-		return errors.New("could not create a new appointment")
-	}
+	// if err != nil {
+	// 	return errors.New("could not create a new appointment")
+	// }
 
 	appointmentEntity := AppointmentModel{
 		UserUuid:    input.UserUuid,
