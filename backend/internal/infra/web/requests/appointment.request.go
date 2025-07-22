@@ -8,5 +8,5 @@ type ListAppointmentRequest struct {
 }
 
 type DeleteAppointmentRequest struct {
-	Uuid string `uri:"uuid"`
+	Uuids []string `json:"uuids"`
 }

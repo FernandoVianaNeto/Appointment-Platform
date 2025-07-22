@@ -1,26 +1,30 @@
 import api from './api';
 
 interface ListAppointmentsFilters {
+  page: string|number,
   searchTerm?: string, 
   filterType?: string,
   date?: string,
 }
 
-export async function listAppointments(input?: ListAppointmentsFilters): Promise<any> {
+export async function listAppointments(input: ListAppointmentsFilters): Promise<any> {
   try {
     const token = localStorage.getItem('token');
 
-    let endpoint = '/appointment/list';
+    console.log(input);
 
-    if (input?.searchTerm || input?.filterType || input?.date) {
-      const query = [];
-    
+    let endpoint = '/appointment/list';
+    const query = [];
+    query.push(`page=${encodeURIComponent(input.page)}`);
+
+    if (input.searchTerm || input.filterType || input.date || input?.page ) {
       if (input.searchTerm) query.push(`searchTerm=${encodeURIComponent(input.searchTerm)}`);
       if (input.filterType) query.push(`filterType=${encodeURIComponent(input.filterType)}`);
       if (input.date) query.push(`date=${encodeURIComponent(input.date)}`);
       endpoint += `?${query.join('&')}`;
     }
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
+    console.log('RES', res.data)
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
@@ -52,5 +56,30 @@ export async function createAppointment(formData: {
       throw new Error('unauthorized');
     }
     throw new Error(error);
+  }
+}
+
+export async function deleteAppointments(input: string[]) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('unauthorized');
+
+    const endpoint = '/appointment/';
+
+    const res = await api.delete(endpoint, {
+      data: {
+        uuids: input
+      },
+      headers: { Authorization: token }
+    });
+
+    console.log(res);
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    console.error('Error deleting appointments:', error);
+    throw new Error('Delete failed');
   }
 }

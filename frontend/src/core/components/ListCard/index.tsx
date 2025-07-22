@@ -5,6 +5,7 @@ import { GiConfirmed } from "react-icons/gi";
 import { useEffect, useState } from 'react';
 
 type Props = {
+  uuid: string,
   patientName: string,
   insurance: string,
   procedure: string,
@@ -14,18 +15,24 @@ type Props = {
   startDate: string,
   endDate: string,
   rowSelected?: boolean,
+  onRowSelected?: (uuid: string) => void;
 };
 
-function ListCard({ patientName, insurance, location, procedure, status, technician, startDate, endDate, rowSelected }: Props) {
+function ListCard({ uuid, patientName, insurance, location, procedure, status, technician, startDate, endDate, rowSelected, onRowSelected }: Props) {
   const [rowSelect, setRowSelected] = useState(rowSelected);
 
   useEffect(() => {
-    setRowSelected(rowSelected)
-  }, [rowSelected])
+    setRowSelected(rowSelected);
+  }, [rowSelected]);
+
+  function handleRowSelected() {
+    setRowSelected(!rowSelect);
+    onRowSelected?.(uuid);
+  }
 
   return (
     <AppointmentRow rowSelected={rowSelect}>
-      <input type="checkbox" onChange={() => setRowSelected(!rowSelect)}  checked={rowSelect}/>
+      <input type="checkbox" onChange={handleRowSelected}  checked={rowSelect}/>
       <Column>{startDate} - {endDate}</Column>
       <Column bold>{patientName}</Column>
       <Column>{insurance}</Column>

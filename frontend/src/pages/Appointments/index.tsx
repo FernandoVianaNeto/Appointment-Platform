@@ -10,9 +10,9 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import { createAppointment, listAppointments } from '../../core/services/appointmentsService';
+import { createAppointment, deleteAppointments, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
-import type { TAppointmentItem, TAppointmentResponse } from '../../core/types/appointments';
+import type { TAppointmentItem } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import CreateAppointmentModal from '../../core/components/CreateAppointmentModal';
@@ -26,11 +26,15 @@ function Appointments() {
   const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
   const [filterDate, setFilterDate] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>();
-  const [appointments, setAppointments] = useState<TAppointmentResponse>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
+  const [allRowsSelected, setAllRowSelected] = useState(false);
   const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
+  const [hasMoreAppointments, setHasMoreAppointments] = useState(true);
+  const [page, setPage] = useState(1);
+  const [appointments, setAppointments] = useState<TAppointmentItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const handleFilterTypeSelected = (value: string) => {
     setFilterTypeSelected(value)
@@ -46,32 +50,85 @@ function Appointments() {
     }
   };
 
-  const getAppointmentListByFilters = async () => {
+  const getAppointmentListByFilters = async (customPage = page, isNewFilter = false) => {
     setLoading(true);
-    const appointments = await listAppointments({ searchTerm, filterType: filterTypeSelected, date: filterDate });
-    setAppointments(appointments);
-    setTotalItems(appointments?.metadata.totalItems ?? 0);
-    setLoading(false);
-  }
-
-  const handleSubmitFilter = async () => {
-      setLoading(true);
-      try {
-        getAppointmentListByFilters();
+    try {
+      const appointmentsResponse = await listAppointments({ 
+        page: customPage, 
+        searchTerm, 
+        filterType: filterTypeSelected, 
+        date: filterDate 
+      });
+  
+      if (isNewFilter || customPage === 1) {
+        setAppointments(appointmentsResponse.data);
+      } else {
+        setAppointments(prev => {
+          const existingIds = new Set(prev.map(item => item.uuid));
+          const newItems = appointmentsResponse.data.filter((item: any) => !existingIds.has(item.uuid));
+          return [...prev, ...newItems];
+        });
       }
-      catch (error: any) {
+  
+      setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
+      setPage(appointmentsResponse?.metadata.next);
+      setHasMoreAppointments(appointmentsResponse?.metadata.next !== 0);
+    } catch (error: any) {
+      navigate('/login');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleSubmitFilter = async () => {
+    try {
+      setAppointments([]);
+      setPage(1);
+      await getAppointmentListByFilters(1, true);
+    } catch (error: any) {
       if (error === "unauthorized") navigate('/');
     }
   };
+
+  const handleGetNextPageAppointments = async () => {
+      setLoading(true);
+      try {
+        getAppointmentListByFilters(page, false);
+      }
+      catch (error: any) {
+      if (error === "unauthorized") navigate('/login');
+    }
+  };
+
+  const handleDeleteAppointments = async () => {
+    try {
+      console.log(selectedItems)
+      await deleteAppointments(selectedItems);
+    }
+    catch (error: any) {
+      if (error === "unauthorized") navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    appointments.map((item) => {
+      if (allRowsSelected) {
+        setRowSelection(true)
+        setSelectedItems((prev) => [...prev, item.uuid])
+      } else {
+        setRowSelection(false)
+        setSelectedItems([])
+      }
+    })
+  }, [allRowsSelected])
 
   useEffect(() => {
     const now = dayjs().format('YYYY-MM-DD');
     setFilterDate(now)
     try {
       async function fetchAppointmentsList() {
-        const appointments = await listAppointments({ date: now });
-        setAppointments(appointments);
-        setTotalItems(appointments?.metadata.totalItems ?? 0);
+        const appointmentsResponse = await listAppointments({ page: page, date: now });
+        setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
         setLoading(false);
       }
     
@@ -86,13 +143,19 @@ function Appointments() {
       initialLoad.current = false;
       return;
     }
-
-    try {
-      setLoading(true);
-      getAppointmentListByFilters();
-    } catch (error: any) {
-      if (error === "unauthorized") navigate('/');
-    }
+  
+    const fetchFilteredAppointments = async () => {
+      try {
+        setLoading(true);
+        setAppointments([]);
+        setPage(1);
+        await getAppointmentListByFilters(1);
+      } catch (error: any) {
+        if (error === "unauthorized") navigate('/');
+      }
+    };
+  
+    fetchFilteredAppointments();
   }, [filterDate]);
 
   return (
@@ -121,20 +184,28 @@ function Appointments() {
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
-            <button>
+            <button type="button" onClick={handleDeleteAppointments}>
               <MdDeleteOutline />
             </button>
           </ListOptionsWrapper>
           
-          <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
+          <ListSummary 
+            fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]}
+            onChange={() => setAllRowSelected(!allRowsSelected)}
+          />
           {loading ? <LoadingSpinner /> : (
-            <DashboardList noContent={appointments?.data.length === 0}>
+            <DashboardList 
+              noContent={appointments?.length === 0}
+              hasMore={hasMoreAppointments}
+              fetchMoreData={handleGetNextPageAppointments}
+            >
               {
-                appointments?.data.length === 0 ?
+                appointments?.length === 0 ?
                 <p>No appointments available</p> : 
-                  appointments?.data.map((appointment: TAppointmentItem) => (
+                  appointments?.map((appointment: TAppointmentItem) => (
                     <ListCard 
                       key={appointment.uuid}
+                      uuid={appointment.uuid}
                       endDate={getHours(appointment.end_date)}
                       startDate={getHours(appointment.start_date)}
                       insurance={appointment.patient.insurance}
@@ -143,7 +214,17 @@ function Appointments() {
                       procedure={appointment.procedure}
                       status={appointment.status}
                       technician="Fernando"
-                      rowSelected={rowSelection}
+                      rowSelected={selectedItems.includes(appointment.uuid)}
+                      onRowSelected={(uuid) => {
+                        setRowSelection(!rowSelection)
+                        setSelectedItems(prev => {
+                          if (prev.includes(uuid)) {
+                            return prev.filter(id => id !== uuid);
+                          } else {
+                            return [...prev, uuid];
+                          }
+                        });
+                      }}
                     />
                   ))
               }

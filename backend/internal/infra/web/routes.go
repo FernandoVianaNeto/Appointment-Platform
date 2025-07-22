@@ -44,7 +44,7 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 			appointment.POST("/create", server.CreateAppointmentHandler)
 			appointment.GET("/list", server.ListAppointmentsHandler)
 			appointment.PUT("/:uuid", server.EditAppointmentHandler)
-			appointment.DELETE("/:uuid", server.DeleteAppointmentHandler)
+			appointment.DELETE("/", server.DeleteAppointmentHandler)
 		}
 	}
 
