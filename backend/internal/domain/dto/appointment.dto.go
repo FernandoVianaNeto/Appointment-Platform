@@ -29,5 +29,5 @@ type EditAppointmentInputDto struct {
 }
 
 type DeleteAppointmentInputDto struct {
-	Uuid *string `json:"uuid"`
+	Uuids []string `json:"uuids"`
 }

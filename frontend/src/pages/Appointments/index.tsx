@@ -10,7 +10,7 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import { createAppointment, listAppointments } from '../../core/services/appointmentsService';
+import { createAppointment, deleteAppointments, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
@@ -29,10 +29,12 @@ function Appointments() {
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
+  const [allRowsSelected, setAllRowSelected] = useState(false);
   const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
   const [hasMoreAppointments, setHasMoreAppointments] = useState(true);
   const [page, setPage] = useState(1);
   const [appointments, setAppointments] = useState<TAppointmentItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const handleFilterTypeSelected = (value: string) => {
     setFilterTypeSelected(value)
@@ -72,8 +74,7 @@ function Appointments() {
       setPage(appointmentsResponse?.metadata.next);
       setHasMoreAppointments(appointmentsResponse?.metadata.next !== 0);
     } catch (error: any) {
-      console.error(error);
-      // navigate('/login');
+      navigate('/login');
     } finally {
       setLoading(false);
     }
@@ -98,6 +99,28 @@ function Appointments() {
       if (error === "unauthorized") navigate('/login');
     }
   };
+
+  const handleDeleteAppointments = async () => {
+    try {
+      console.log(selectedItems)
+      await deleteAppointments(selectedItems);
+    }
+    catch (error: any) {
+      if (error === "unauthorized") navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    appointments.map((item) => {
+      if (allRowsSelected) {
+        setRowSelection(true)
+        setSelectedItems((prev) => [...prev, item.uuid])
+      } else {
+        setRowSelection(false)
+        setSelectedItems([])
+      }
+    })
+  }, [allRowsSelected])
 
   useEffect(() => {
     const now = dayjs().format('YYYY-MM-DD');
@@ -161,12 +184,15 @@ function Appointments() {
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
-            <button>
+            <button type="button" onClick={handleDeleteAppointments}>
               <MdDeleteOutline />
             </button>
           </ListOptionsWrapper>
           
-          <ListSummary fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]} onChange={() => setRowSelection(!rowSelection)}/>
+          <ListSummary 
+            fields={["Time", "Patient Name", "Insurance", "Procedure", "Technician", "Location", "Status"]}
+            onChange={() => setAllRowSelected(!allRowsSelected)}
+          />
           {loading ? <LoadingSpinner /> : (
             <DashboardList 
               noContent={appointments?.length === 0}
@@ -179,6 +205,7 @@ function Appointments() {
                   appointments?.map((appointment: TAppointmentItem) => (
                     <ListCard 
                       key={appointment.uuid}
+                      uuid={appointment.uuid}
                       endDate={getHours(appointment.end_date)}
                       startDate={getHours(appointment.start_date)}
                       insurance={appointment.patient.insurance}
@@ -187,7 +214,17 @@ function Appointments() {
                       procedure={appointment.procedure}
                       status={appointment.status}
                       technician="Fernando"
-                      rowSelected={rowSelection}
+                      rowSelected={selectedItems.includes(appointment.uuid)}
+                      onRowSelected={(uuid) => {
+                        setRowSelection(!rowSelection)
+                        setSelectedItems(prev => {
+                          if (prev.includes(uuid)) {
+                            return prev.filter(id => id !== uuid);
+                          } else {
+                            return [...prev, uuid];
+                          }
+                        });
+                      }}
                     />
                   ))
               }

@@ -5,6 +5,7 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
 	"context"
+	"fmt"
 )
 
 type DeleteAppointmentUsecase struct {
@@ -20,7 +21,9 @@ func NewDeleteAppointmentUseCase(
 }
 
 func (u *DeleteAppointmentUsecase) Execute(ctx context.Context, input dto.DeleteAppointmentInputDto) error {
-	u.AppointmentRepository.Delete(ctx, input)
+	fmt.Println("INPUT", input)
 
-	return nil
+	err := u.AppointmentRepository.DeleteMany(ctx, input.Uuids)
+
+	return err
 }

@@ -58,3 +58,28 @@ export async function createAppointment(formData: {
     throw new Error(error);
   }
 }
+
+export async function deleteAppointments(input: string[]) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('unauthorized');
+
+    const endpoint = '/appointment/';
+
+    const res = await api.delete(endpoint, {
+      data: {
+        uuids: input
+      },
+      headers: { Authorization: token }
+    });
+
+    console.log(res);
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    console.error('Error deleting appointments:', error);
+    throw new Error('Delete failed');
+  }
+}

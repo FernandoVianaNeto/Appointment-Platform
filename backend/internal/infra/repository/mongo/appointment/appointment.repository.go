@@ -101,7 +101,10 @@ func (f *AppointmentRepository) List(ctx context.Context, input dto.ListAppointm
 	opts := options.Find()
 	opts.SetLimit(limit)
 	opts.SetSkip(skip)
-	opts.SetSort(bson.M{"start_date": 1})
+	opts.SetSort(bson.D{
+		{"start_date", 1},
+		{"technician", 1},
+	})
 
 	cursor, err := f.collection.Find(ctx, filters, opts)
 	if err != nil {
@@ -161,10 +164,22 @@ func (f *AppointmentRepository) Edit(ctx context.Context, input dto.EditAppointm
 	return err
 }
 
-func (f *AppointmentRepository) Delete(ctx context.Context, input dto.DeleteAppointmentInputDto) {
-	filter := bson.M{"uuid": input.Uuid}
+func (f *AppointmentRepository) Delete(ctx context.Context, uuid string) {
+	filter := bson.M{"uuid": uuid}
 
 	f.collection.FindOneAndDelete(ctx, filter)
+}
+
+func (f *AppointmentRepository) DeleteMany(ctx context.Context, ids []string) error {
+	fmt.Println("IDS", ids)
+	filter := bson.M{
+		"uuid": bson.M{
+			"$in": ids,
+		},
+	}
+
+	_, err := f.collection.DeleteMany(ctx, filter)
+	return err
 }
 
 func (f *AppointmentRepository) CountDocuments(ctx context.Context, input dto.ListAppointmentInputDto) (int64, error) {
