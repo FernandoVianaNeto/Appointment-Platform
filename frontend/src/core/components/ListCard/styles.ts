@@ -26,7 +26,7 @@ export const Column = styled.div<{ bold?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 200px;
+  max-width: 150px;
   display: flex;
   align-items: center;
 `;
@@ -41,10 +41,10 @@ export const Status = styled.div<{
   color: ${({ confirmed, canceled }) => confirmed ? 'green' : (canceled ? 'red' : '#b0ae31')};
   font-weight: 500;
   flex-shrink: 0;
-  width: 200px;
+  width: 150px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  background-color: red;
 `;
 
 export const IconWrapper = styled.div`

@@ -19,7 +19,9 @@ export const Column = styled.div<{ bold?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 300px;
+  max-width: 150px;
+  display: flex;
+  align-items: center;
 `;
 
 export const Status = styled.div<{
@@ -28,6 +30,8 @@ export const Status = styled.div<{
   }>`
     display: flex;
     align-items: center;
+    justify-content: center;
+
     gap: 6px;
     color: ${({ confirmed, canceled }) => confirmed ? 'green' : (canceled ? 'red' : '#b0ae31')};
     font-weight: 500;
