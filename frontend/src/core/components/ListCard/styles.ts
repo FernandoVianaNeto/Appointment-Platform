@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FiPhone } from 'react-icons/fi';
+import { MdEdit } from "react-icons/md";
 
 export const AppointmentRow = styled.div<{
   rowSelected?: boolean;
@@ -48,14 +49,27 @@ export const Status = styled.div<{
 
 export const IconWrapper = styled.div`
   background-color: white;
-  border-radius: 50%;
   padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
 `;
 
 export const PhoneIcon = styled(FiPhone)`
+  color: #6a5acd;
+  font-size: 16px;
+`;
+
+export const EditIcon = styled(MdEdit)`
   color: #6a5acd;
   font-size: 16px;
 `;

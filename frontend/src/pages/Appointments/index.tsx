@@ -10,7 +10,7 @@ import DateSelector from '../../core/components/DateSelector';
 import CreationEditButton from '../../core/components/CreationEditButton';
 import DashboardList from '../../core/components/DashboardList';
 import ListCard from '../../core/components/ListCard';
-import { createAppointment, deleteAppointments, listAppointments } from '../../core/services/appointmentsService';
+import { createAppointment, deleteAppointments, editAppointment, listAppointments } from '../../core/services/appointmentsService';
 import { useNavigate } from 'react-router-dom';
 import type { TAppointmentItem } from '../../core/types/appointments';
 import ListSummary from '../../core/components/ListSummary';
@@ -19,6 +19,7 @@ import CreateAppointmentModal from '../../core/components/CreateAppointmentModal
 import LoadingSpinner from '../../core/components/Loading';
 import { getHours } from '../../core/helpers/getHours';
 import dayjs from 'dayjs';
+import EditAppointmentModal from '../../core/components/EditAppointmentModal';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -30,7 +31,9 @@ function Appointments() {
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
   const [allRowsSelected, setAllRowSelected] = useState(false);
-  const [createEditModalOpen, setCreateEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [appointmentToBeEditted, setAppointmentToBeEditted] = useState<TAppointmentItem>();
   const [hasMoreAppointments, setHasMoreAppointments] = useState(true);
   const [page, setPage] = useState(1);
   const [appointments, setAppointments] = useState<TAppointmentItem[]>([]);
@@ -43,10 +46,20 @@ function Appointments() {
   const handleCreateAppointment = async (formData: any) => {
     try {
       await createAppointment(formData);
-      setCreateEditModalOpen(false);
+      setCreateModalOpen(false);
       window.location.reload();
     } catch (err) {
       console.error("Error on appointment creation", err);
+    }
+  };
+
+  const handleEditAppointment = async (formData: any) => {
+    try {
+      await editAppointment(formData);
+      setEditModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error on appointment edditing", err);
     }
   };
 
@@ -160,7 +173,8 @@ function Appointments() {
 
   return (
     <Container>
-      <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createEditModalOpen} onClose={() => setCreateEditModalOpen(false)} />
+      <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
+      <EditAppointmentModal onEdit={(e) => handleEditAppointment(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} appointment={appointmentToBeEditted as TAppointmentItem}/>
       <SideBar>
           <SideBarButton text="Appointments" highlight/>
           <SideBarButton text="Patients" />
@@ -177,7 +191,7 @@ function Appointments() {
           <H1>Appointments</H1>
             <Div>
               <DateSelector onClick={(selectedDate) => setFilterDate(selectedDate.format('YYYY-MM-DD'))}/>
-              <CreationEditButton text="New Appointment" highlight onClick={() => setCreateEditModalOpen(true)}/>
+              <CreationEditButton text="New Appointment" highlight onClick={() => setCreateModalOpen(true)}/>
             </Div>
         </Wrapper>
   
@@ -224,6 +238,10 @@ function Appointments() {
                             return [...prev, uuid];
                           }
                         });
+                      }}
+                      onEdit={() => { 
+                        setEditModalOpen(true)
+                        setAppointmentToBeEditted(appointment)
                       }}
                     />
                   ))

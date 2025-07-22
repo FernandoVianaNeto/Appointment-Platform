@@ -59,6 +59,32 @@ export async function createAppointment(formData: {
   }
 }
 
+export async function editAppointment(formData: {
+  uuid: string;
+  patientName: string;
+  insurance: string;
+  procedure: string;
+  technician: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+}) : Promise<any> {
+  try {
+    const token = localStorage.getItem('token');
+    const data: any = new FormData();
+    for (const key in formData) {
+      data.append(key, formData[key]);
+    }
+    const res = await api.put(`/appointment/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    throw new Error(error);
+  }
+}
+
 export async function deleteAppointments(input: string[]) {
   try {
     const token = localStorage.getItem('token');
