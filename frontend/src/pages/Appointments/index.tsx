@@ -176,8 +176,8 @@ function Appointments() {
       <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
       <EditAppointmentModal onEdit={(e) => handleEditAppointment(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} appointment={appointmentToBeEditted as TAppointmentItem}/>
       <SideBar>
-          <SideBarButton text="Appointments" highlight/>
-          <SideBarButton text="Patients" />
+          <SideBarButton text="Appointments" highlight onClick={() => navigate('/appointments')}/>
+          <SideBarButton text="Patients" onClick={() => navigate('/patients')}/>
           <SideBarButton text="Settings"/>
       </SideBar>
 

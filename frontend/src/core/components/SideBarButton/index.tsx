@@ -3,11 +3,12 @@ import { Container } from './styles';
 interface SideBarButtonProps {
     text: string;
     highlight?: boolean,
+    onClick?: () => void
 }
 
-function SideBarButton({ text, highlight }: SideBarButtonProps) {
+function SideBarButton({ text, highlight, onClick }: SideBarButtonProps) {
   return (
-    <Container highlight={highlight}>
+    <Container highlight={highlight} onClick={onClick}>
        {text}
     </Container>
   );

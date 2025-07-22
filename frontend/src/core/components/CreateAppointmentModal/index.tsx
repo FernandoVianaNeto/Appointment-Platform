@@ -54,7 +54,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
         if (name.trim() === "") {
           return;
         }
-        const result = await listPatients(name);
+        const result = await listPatients({ searchTerm: name, page: 1 });
         setRecommendedPatients(result.data);
       }
   
