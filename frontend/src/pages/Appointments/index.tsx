@@ -26,7 +26,6 @@ function Appointments() {
   const [filterTypeSelected, setFilterTypeSelected] = useState<string>();
   const [filterDate, setFilterDate] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>();
-  const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState(false);
   const [allRowsSelected, setAllRowSelected] = useState(false);
@@ -70,7 +69,6 @@ function Appointments() {
         });
       }
   
-      setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
       setPage(appointmentsResponse?.metadata.next);
       setHasMoreAppointments(appointmentsResponse?.metadata.next !== 0);
     } catch (error: any) {
@@ -102,8 +100,12 @@ function Appointments() {
 
   const handleDeleteAppointments = async () => {
     try {
-      console.log(selectedItems)
       await deleteAppointments(selectedItems);
+
+      setAppointments(prev =>
+        prev.filter(appointment => !selectedItems.includes(appointment.uuid))
+      );
+      setRowSelection(false);
     }
     catch (error: any) {
       if (error === "unauthorized") navigate('/login');
@@ -127,8 +129,7 @@ function Appointments() {
     setFilterDate(now)
     try {
       async function fetchAppointmentsList() {
-        const appointmentsResponse = await listAppointments({ page: page, date: now });
-        setTotalItems(appointmentsResponse?.metadata.totalItems ?? 0);
+        await listAppointments({ page: page, date: now });
         setLoading(false);
       }
     
@@ -183,7 +184,7 @@ function Appointments() {
   
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
-            <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+            <span>Showing: <p>{loading ? 0 : appointments.length} appointments</p></span>
             <button type="button" onClick={handleDeleteAppointments}>
               <MdDeleteOutline />
             </button>
