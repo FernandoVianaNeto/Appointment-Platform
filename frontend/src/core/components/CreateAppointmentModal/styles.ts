@@ -26,6 +26,7 @@ export const ModalContainer = styled.div`
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 24px;
+    color: ${({ theme }) => theme.colors.primary};
   }
 
   form {
@@ -37,8 +38,9 @@ export const ModalContainer = styled.div`
       display: flex;
       flex-direction: column;
       font-size: 14px;
-      font-weight: 500;
-      color: #333;
+      font-weight: 600;
+      color: ${({ theme }) => theme.colors.primary};
+      gap: 5px;
     }
 
     input,
@@ -100,6 +102,7 @@ export const DateWrapper = styled.div`
   label {
     flex: 1;
     min-width: 220px;
+    gap: 10px;
   }
 `;
 

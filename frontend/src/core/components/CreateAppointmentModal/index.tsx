@@ -3,6 +3,7 @@ import { DateWrapper, InputWrapper, ModalContainer, Overlay } from "./styles";
 import { listPatients } from "../../services/patientService";
 import type { TPatientData } from "../../types/patient";
 import SuggestionDropdown from "../SuggestionDropdown";
+import { addMinutesToTime } from "../../helpers/addMinutesToTime";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,11 +28,12 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
       form.technician.value === undefined || 
       form.startDate.value === undefined ||
       form.startTime.value == undefined ||
-      form.endDate.value == undefined ||
-      form.endTime.value == undefined 
+      form.procedureDuration.value == undefined
     ) {
       throw new Error('Could not save appointment. Missing Required fields')
     }
+
+    const endTime = addMinutesToTime(form.startTime.value, form.procedureDuration.value)
 
     const data = {
       patient_uuid: selectedPatient?.uuid,
@@ -40,7 +42,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
       technician: form.technician.value,
       location: form.location.value,
       start_date: `${form.startDate.value}T${form.startTime.value}`,
-      end_date: `${form.endDate.value}T${form.endTime.value}`,
+      end_date: `${form.startDate.value}T${endTime}`,
     };
 
     onSave(data);
@@ -124,15 +126,8 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
               Start Date*:
               <InputWrapper>
                 <input className="start-date-input" type="date" name="startDate" />
-                <input className="start-date-time-input" type="time" name="startTime"/>
-              </InputWrapper>
-            </label>
-
-            <label>
-              End Date*:
-              <InputWrapper>
-                <input className="end-date-input" type="date" name="endDate" />
-                <input className="end-date-time-input" type="time" name="endTime"/>
+                <input className="start-date-time-input" type="time" name="startTime" />
+                <input className="procedure-duration-input" type="number" name="procedureDuration" placeholder="Duration in minutes" />
               </InputWrapper>
             </label>
           </DateWrapper>

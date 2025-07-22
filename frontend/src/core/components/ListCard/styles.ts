@@ -44,7 +44,6 @@ export const Status = styled.div<{
   width: 150px;
   display: flex;
   align-items: center;
-  background-color: red;
 `;
 
 export const IconWrapper = styled.div`

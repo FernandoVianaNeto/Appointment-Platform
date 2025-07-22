@@ -38,7 +38,6 @@ export const ListOptionsWrapper = styled.div<{
     background: transparent;
     cursor: pointer;
     font-size: 20px;
-    color: red;
     margin: 0;
     padding: 0;
   }
