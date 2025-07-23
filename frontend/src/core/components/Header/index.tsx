@@ -1,6 +1,6 @@
-import { ButtonText, Container, IconButton, SearchButton, Wrapper } from './styles';
-import { RiAccountCircleFill } from "react-icons/ri";
-import { IoMdSettings } from "react-icons/io";
+import { Container, SearchButton, Wrapper } from './styles';
+// import { RiAccountCircleFill } from "react-icons/ri";
+// import { IoMdSettings } from "react-icons/io";
 
 type Props = {
   children: React.ReactNode;
@@ -17,13 +17,13 @@ function Header({children, onSubmit }: Props) {
             </SearchButton>
         </Wrapper>
         <Wrapper>
-            <IconButton>
+            {/* <IconButton>
                 <IoMdSettings />
             </IconButton>
             <IconButton>
                 <RiAccountCircleFill />
                 <ButtonText>My Account</ButtonText>
-            </IconButton>
+            </IconButton> */}
         </Wrapper>
     </Container>
   );

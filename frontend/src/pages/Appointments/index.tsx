@@ -189,7 +189,6 @@ function Appointments() {
       <SideBar>
           <SideBarButton text="Appointments" highlight onClick={() => navigate('/appointments')}/>
           <SideBarButton text="Patients" onClick={() => navigate('/patients')}/>
-          <SideBarButton text="Settings"/>
       </SideBar>
 
       <Dashboard>

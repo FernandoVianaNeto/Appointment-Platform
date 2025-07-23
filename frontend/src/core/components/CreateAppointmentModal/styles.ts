@@ -13,7 +13,8 @@ export const Overlay = styled.div`
   z-index: 999;
 `;
 
-export const ModalContainer = styled.div`
+export const ModalContainer = styled.div<{
+}>`
   background: white;
   padding: 32px;
   border-radius: 16px;
@@ -43,7 +44,6 @@ export const ModalContainer = styled.div`
       gap: 5px;
     }
 
-    input,
     select {
       padding: 10px 12px;
       font-size: 14px;
@@ -90,6 +90,21 @@ export const ModalContainer = styled.div`
         }
       }
     }
+  }
+`;
+
+export const Input = styled.input<{
+  missingField?: boolean,
+}>`
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid ${({ missingField }) => missingField ? 'red' : '#cfd4dc' } ;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #5a67d8;
   }
 `;
 
