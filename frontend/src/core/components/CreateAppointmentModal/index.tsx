@@ -14,9 +14,13 @@ interface ModalProps {
 function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
   if (!isOpen) return null;
   const [name, setName] = useState<string>("");
+
   const [show, setShow] = useState<boolean>(false);
+  const [isMissingRequiredFields, setIsMissingRequiredFields] = useState<boolean>(false);
+
   const [recommendedPatients, setRecommendedPatients] = useState<TPatientData[]>([])
   const [selectedPatient, setSelectedPatient] = useState<TPatientData>()
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +34,9 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
       form.startTime.value == undefined ||
       form.procedureDuration.value == undefined
     ) {
-      throw new Error('Could not save appointment. Missing Required fields')
+      setIsMissingRequiredFields(true);
+    } else {
+      setIsMissingRequiredFields(false);
     }
 
     const endTime = addMinutesToTime(form.startTime.value, form.procedureDuration.value)
@@ -89,7 +95,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
                 className="patient-input"
               />
             </label>
-            {show && recommendedPatients?.length > 0 && (
+            {show && (
               <SuggestionDropdown
                 results={recommendedPatients}
                 onSelect={(selectedName) => {
@@ -131,7 +137,9 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
               </InputWrapper>
             </label>
           </DateWrapper>
-         
+         {
+          isMissingRequiredFields && <p>Missing required fields</p>
+         }
           <div className="actions">
             <button type="submit">Save</button>
             <button type="button" onClick={onClose}>Cancel</button>
