@@ -20,11 +20,12 @@ type ListPatientInputDto struct {
 }
 
 type EditPatientInputDto struct {
-	Uuid    string  `json:"uuid"`
-	Name    *string `json:"name"`
-	Phone   *string `json:"phone"`
-	Email   *string `json:"email"`
-	Address *string `json:"address"`
+	Uuid        string  `json:"uuid"`
+	PatientUuid string  `json:"patient_uuid"`
+	Name        *string `json:"name"`
+	Phone       *string `json:"phone"`
+	Email       *string `json:"email"`
+	Address     *string `json:"address"`
 }
 
 type DeletePatientInputDto struct {

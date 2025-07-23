@@ -47,6 +47,8 @@ func (u *ListPatientUsecase) Execute(ctx context.Context, input dto.ListPatientI
 			Name:      patient.Name,
 			Insurance: *patient.Insurance,
 			Phone:     patient.Phone,
+			Address:   *patient.Address,
+			Email:     *patient.Email,
 		})
 	}
 

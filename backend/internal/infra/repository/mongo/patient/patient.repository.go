@@ -103,7 +103,7 @@ func (f *PatientRepository) Edit(ctx context.Context, input dto.EditPatientInput
 
 	update := bson.M{"$set": updateFields}
 
-	filter := bson.M{"uuid": input.Uuid}
+	filter := bson.M{"user_uuid": input.Uuid, "uuid": input.PatientUuid}
 
 	err := f.collection.FindOneAndUpdate(ctx, filter, update).Err()
 	return err
