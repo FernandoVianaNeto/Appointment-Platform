@@ -20,6 +20,7 @@ import LoadingSpinner from '../../core/components/Loading';
 import { getHours } from '../../core/helpers/getHours';
 import dayjs from 'dayjs';
 import EditAppointmentModal from '../../core/components/EditAppointmentModal';
+import ConfirmationModal from '../../core/components/ConfirmationModal';
 
 function Appointments() {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ function Appointments() {
   const [page, setPage] = useState(1);
   const [appointments, setAppointments] = useState<TAppointmentItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isConfirmationModalOpened, setIsConfirmationModalOpen] = useState(false);
 
   const handleFilterTypeSelected = (value: string) => {
     setFilterTypeSelected(value)
@@ -115,8 +117,8 @@ function Appointments() {
 
   const handleDeleteAppointments = async () => {
     try {
-      console.log(selectedItems)
       await deleteAppointments(selectedItems);
+      window.location.reload();
     }
     catch (error: any) {
       if (error === "unauthorized") navigate('/login');
@@ -175,6 +177,15 @@ function Appointments() {
     <Container>
       <CreateAppointmentModal onSave={(e) => handleCreateAppointment(e)} isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
       <EditAppointmentModal onEdit={(e) => handleEditAppointment(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} appointment={appointmentToBeEditted as TAppointmentItem}/>
+      <ConfirmationModal
+        confirmationText={selectedItems.length > 1 ? `Are you sure you want to delete the appointments?` : `Are you sure you want to delete the appointment?` }
+        isOpen={isConfirmationModalOpened} 
+        onClose={() => setIsConfirmationModalOpen(false)} 
+        onConfirm={() => {
+          setIsConfirmationModalOpen(false)
+          handleDeleteAppointments()
+        }}
+      />
       <SideBar>
           <SideBarButton text="Appointments" highlight onClick={() => navigate('/appointments')}/>
           <SideBarButton text="Patients" onClick={() => navigate('/patients')}/>
@@ -197,8 +208,8 @@ function Appointments() {
   
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
-            <span>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
-            <button type="button" onClick={handleDeleteAppointments}>
+            <span className='total-appointments'>Showing: <p>{loading ? 0 : totalItems} appointments</p></span>
+            <button className="delete-button" type="button" onClick={() => setIsConfirmationModalOpen(true)}>
               <MdDeleteOutline />
             </button>
           </ListOptionsWrapper>
@@ -215,7 +226,7 @@ function Appointments() {
             >
               {
                 appointments?.length === 0 ?
-                <p>No appointments available</p> : 
+                <p className='empty-appointments'>No appointments available</p> : 
                   appointments?.map((appointment: TAppointmentItem) => (
                     <ListCard 
                       key={appointment.uuid}
