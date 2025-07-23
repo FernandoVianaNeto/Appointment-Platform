@@ -31,8 +31,8 @@ function PatientCard({ uuid, patientName, insurance, phone, address, email, rowS
       <Column bold>{patientName}</Column>
       <Column>{insurance}</Column>
       <Column>{phone }</Column>
-      <Column>{address ?? 'Not available'}</Column>
       <Column>{email ?? 'Not available'}</Column>
+      <Column>{address ?? 'Not available'}</Column>
       <IconWrapper>
         <PhoneIcon />
       </IconWrapper>

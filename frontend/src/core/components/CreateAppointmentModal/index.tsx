@@ -75,18 +75,7 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
       setIsMissingLocation(true); 
       setIsMissingRequiredFields(true);
     } 
-    
-    else {
-      setIsMissingRequiredFields(false);
-      setIsMissingInsurance(false);
-      setIsMissingProcedure(false); 
-      setIsMissingTechnician(false); 
-      setIsMissingStartDate(false); 
-      setIsMissingStartTime(false); 
-      setIsMissingProcedureDuration(false); 
-      setIsMissingRequiredFields(false);
-    }
-
+  
     const endTime = addMinutesToTime(form.startTime.value, form.procedureDuration.value)
 
     const data = {

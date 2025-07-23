@@ -21,7 +21,6 @@ import ConfirmationModal from '../../core/components/ConfirmationModal';
 
 function Patients() {
   const navigate = useNavigate();
-  // const initialLoad = useRef(true);
   const [searchTerm, setSearchTerm] = useState<string>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);

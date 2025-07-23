@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModalContainer, Overlay } from "./styles";
+import { Input, ModalContainer, Overlay } from "./styles";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,19 +10,28 @@ interface ModalProps {
 function CreatePatientModal ({ isOpen, onClose, onSave }: ModalProps) {
   if (!isOpen) return null;
   const [name, setName] = useState<string>("");
+  const [isMissingName, setIsMissingName] = useState<boolean>(false);
+  const [isMissingInsurance, setIsMissingInsurance] = useState<boolean>(false);
+  const [isMissingPhone, setIsMissingPhone] = useState<boolean>(false);
+  const [isMissingRequiredFields, setIsMissingRequiredFields] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
 
-    if ( 
-      form.patientName.value === undefined ||
-      form.insurance.value === undefined || 
-      form.phone.value === undefined || 
-      form.address.value === undefined || 
-      form.email.value === undefined
-    ) {
-      throw new Error('Could not save patient. Missing Required fields')
+    if (form.patientName.value === "") {
+      setIsMissingRequiredFields(true);
+      setIsMissingName(true);
+    }
+
+    if (form.insurance.value === '') {
+      setIsMissingInsurance(true); 
+      setIsMissingRequiredFields(true);
+    }
+
+    if (form.phone.value === '') {
+      setIsMissingPhone(true); 
+      setIsMissingRequiredFields(true);
     }
 
     const data = {
@@ -44,7 +53,7 @@ function CreatePatientModal ({ isOpen, onClose, onSave }: ModalProps) {
           <div style={{ position: 'relative' }}>
             <label>
               Patient Name*:
-              <input
+              <Input
                 type="text"
                 name="patientName"
                 value={name}
@@ -52,30 +61,33 @@ function CreatePatientModal ({ isOpen, onClose, onSave }: ModalProps) {
                   setName(e.target.value);
                 }}
                 className="patient-input"
+                missingField={isMissingName}
               />
             </label>
           </div>
 
           <label>
-            Insurance:
-            <input className="insurance-input" type="text" name="insurance" />
+            Insurance*:
+            <Input className="insurance-input" type="text" name="insurance" missingField={isMissingInsurance}/>
           </label>
 
           <label>
             Phone*:
-            <input className="phone-input" type="phone" name="phone" />
+            <Input className="phone-input" type="phone" name="phone" missingField={isMissingPhone}/>
           </label>
 
           <label>
             Email:
-            <input className="email-input" type="text" name="email" />
+            <Input className="email-input" type="text" name="email" />
           </label>
 
           <label>
             Address:
-            <input className="address-input" type="text" name="address" />
+            <Input className="address-input" type="text" name="address" />
           </label>
-
+          {
+            isMissingRequiredFields && <p>Missing required fields</p>
+          }
           <div className="actions">
             <button type="submit">Save</button>
             <button type="button" onClick={onClose}>Cancel</button>
