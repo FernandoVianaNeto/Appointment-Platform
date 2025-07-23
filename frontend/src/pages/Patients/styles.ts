@@ -40,6 +40,7 @@ export const ListOptionsWrapper = styled.div<{
     font-size: 20px;
     margin: 0;
     padding: 0;
+    color: red;
   }
 `;
 

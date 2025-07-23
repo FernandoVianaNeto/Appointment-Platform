@@ -9,8 +9,6 @@ export async function listPatients(filters: TListPatientsFilters): Promise<any> 
   try {
     const token = localStorage.getItem('token');
 
-    console.log(filters);
-
     let endpoint = '/patient/list';
     const query = [];
     query.push(`page=${encodeURIComponent(filters.page)}`);
@@ -53,6 +51,33 @@ export async function createPatient(formData: {
   }
 }
 
+export async function editPatient(formData: {
+  uuid: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address?: string;
+}) : Promise<any> {
+  try {
+    const token = localStorage.getItem('token');
+    const data: any = new FormData();
+
+    for (const key in formData) {
+    console.log("DATA EDIT", key)
+
+      data.append(key, formData[key]);
+    }
+
+    console.log("DATA EDIT", data)
+    const res = await api.put(`/patient/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    throw new Error(error);
+  }
+}
 
 export async function deletePatients(input: string[]) {
   try {

@@ -5,6 +5,8 @@ type PatientData struct {
 	Name      string `json:"name"`
 	Insurance string `json:"insurance"`
 	Phone     string `json:"phone"`
+	Address   string `json:"address"`
+	Email     string `json:"email"`
 }
 
 type ListPatientsResponse struct {

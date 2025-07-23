@@ -120,6 +120,12 @@ func (s *Server) DeletePatientHandler(ctx *gin.Context) {
 
 func (s *Server) EditPatientHandler(ctx *gin.Context) {
 	err := ctx.Request.ParseMultipartForm(10 << 20)
+	var req requests.EditPatientRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request json"})
+		return
+	}
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
@@ -138,7 +144,8 @@ func (s *Server) EditPatientHandler(ctx *gin.Context) {
 	}
 
 	editPatientDto := dto.EditPatientInputDto{
-		Uuid: userUuid,
+		Uuid:        userUuid,
+		PatientUuid: req.Uuid,
 	}
 
 	if form.Get("name") != "" {

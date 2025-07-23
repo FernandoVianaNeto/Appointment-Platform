@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Dashboard from '../../core/components/Dashboard';
 import Header from '../../core/components/Header';
 import HeaderInput from '../../core/components/HeaderInput';
@@ -13,13 +13,15 @@ import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import LoadingSpinner from '../../core/components/Loading';
 import type { TPatientData } from '../../core/types/patient';
-import { createPatient, deletePatients, listPatients } from '../../core/services/patientService';
+import { createPatient, deletePatients, editPatient, listPatients } from '../../core/services/patientService';
 import PatientCard from '../../core/components/PatientCard';
 import CreatePatientModal from '../../core/components/CreatePatientModal';
+import EditPatientModal from '../../core/components/EditPatientModal';
+import ConfirmationModal from '../../core/components/ConfirmationModal';
 
 function Patients() {
   const navigate = useNavigate();
-  const initialLoad = useRef(true);
+  // const initialLoad = useRef(true);
   const [searchTerm, setSearchTerm] = useState<string>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
@@ -27,6 +29,8 @@ function Patients() {
   const [allRowsSelected, setAllRowSelected] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const [isConfirmationModalOpened, setIsConfirmationModalOpen] = useState(false);
 
   const [patientToBeEditted, setPatientToBeEditted] = useState<TPatientData>();
   const [hasMorePatients, setHasMorePatients] = useState(true);
@@ -44,15 +48,16 @@ function Patients() {
     }
   };
 
-  // const handleEditAppointment = async (formData: any) => {
-  //   try {
-  //     await editAppointment(formData);
-  //     setEditModalOpen(false);
-  //     window.location.reload();
-  //   } catch (err) {
-  //     console.error("Error on appointment edditing", err);
-  //   }
-  // };
+  const handleEditPatient = async (formData: any) => {
+    try {
+      console.log("FORM DATA", formData)
+      await editPatient(formData);
+      setEditModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error on patient edditing", err);
+    }
+  };
 
   const getPatientsListByFilters = async (customPage = page, isNewFilter = false) => {
     setLoading(true);
@@ -144,7 +149,16 @@ function Patients() {
   return (
     <Container>
       <CreatePatientModal onSave={(e) => handleCreatePatient(e)} isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
-      {/* <EditAppointmentModal onEdit={(e) => handleEditAppointment(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} appointment={patientToBeEditted as TPatientData}/> */}
+      <EditPatientModal onEdit={(e) => handleEditPatient(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} patient={patientToBeEditted as TPatientData}/>
+      <ConfirmationModal 
+        confirmationText={selectedItems.length > 1 ? `Are you sure you want to delete the patients?` : `Are you sure you want to delete the patient?` }
+        isOpen={isConfirmationModalOpened} 
+        onClose={() => setIsConfirmationModalOpen(false)} 
+        onConfirm={() => {
+          setIsConfirmationModalOpen(false)
+          handleDeletePatients()
+        }}
+      />
       <SideBar>
           <SideBarButton text="Appointments" onClick={() => navigate('/appointments')}/>
           <SideBarButton text="Patients" highlight />
@@ -167,7 +181,7 @@ function Patients() {
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} patients</p></span>
-            <button type="button" onClick={handleDeletePatients}>
+            <button type="button" onClick={() => setIsConfirmationModalOpen(true)}>
               <MdDeleteOutline />
             </button>
           </ListOptionsWrapper>
@@ -192,6 +206,8 @@ function Patients() {
                       insurance={patient.insurance}
                       phone={patient.phone}
                       patientName={patient.name}
+                      address={patient.address}
+                      email={patient.email}
                       rowSelected={selectedItems.includes(patient.uuid)}
                       onRowSelected={(uuid) => {
                         setRowSelection(!rowSelection)
