@@ -9,5 +9,5 @@ type ListPatientRequest struct {
 }
 
 type DeletePatientRequest struct {
-	Uuid string `uri:"uuid"`
+	Uuids []string `uri:"uuids"`
 }

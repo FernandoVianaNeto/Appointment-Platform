@@ -171,7 +171,6 @@ func (f *AppointmentRepository) Delete(ctx context.Context, uuid string) {
 }
 
 func (f *AppointmentRepository) DeleteMany(ctx context.Context, ids []string) error {
-	fmt.Println("IDS", ids)
 	filter := bson.M{
 		"uuid": bson.M{
 			"$in": ids,

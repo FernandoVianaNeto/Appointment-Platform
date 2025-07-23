@@ -93,19 +93,6 @@ export const ModalContainer = styled.div`
   }
 `;
 
-export const DateWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-
-  label {
-    flex: 1;
-    min-width: 220px;
-    gap: 10px;
-  }
-`;
-
 export const InputWrapper = styled.div`
   display: flex;
   gap: 10px;

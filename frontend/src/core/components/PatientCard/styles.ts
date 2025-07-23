@@ -27,7 +27,7 @@ export const Column = styled.div<{ bold?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  max-width: 250px;
   display: flex;
   align-items: center;
 `;

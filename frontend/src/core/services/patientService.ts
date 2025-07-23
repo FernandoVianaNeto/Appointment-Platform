@@ -52,3 +52,29 @@ export async function createPatient(formData: {
     throw new Error(error);
   }
 }
+
+
+export async function deletePatients(input: string[]) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('unauthorized');
+
+    const endpoint = '/patient/';
+
+    const res = await api.delete(endpoint, {
+      data: {
+        uuids: input
+      },
+      headers: { Authorization: token }
+    });
+
+    console.log("DELETE RESPONSE",res);
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    console.error('Error deleting patients:', error);
+    throw new Error('Delete failed');
+  }
+}

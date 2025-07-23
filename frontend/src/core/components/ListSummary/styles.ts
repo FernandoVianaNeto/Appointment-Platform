@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FiPhone } from 'react-icons/fi';
+import { MdEdit } from 'react-icons/md';
 
 export const AppointmentRow = styled.div`
   display: flex;
@@ -13,21 +14,24 @@ export const AppointmentRow = styled.div`
   color: #333;
 `;
 
-export const Column = styled.div<{ bold?: boolean }>`
+export const Column = styled.div<{ 
+  bold?: boolean, 
+  lessColumns?: boolean 
+}>`
   flex: 1;
   font-weight: ${({ bold }) => (bold ? '600' : '400')};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  max-width: ${({ lessColumns }) => lessColumns ? '300' : 150};
   display: flex;
   align-items: center;
 `;
 
 export const Status = styled.div<{
-    confirmed?: boolean,
-    canceled?: boolean,
-  }>`
+  confirmed?: boolean,
+  canceled?: boolean,
+}>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,19 +44,23 @@ export const Status = styled.div<{
     display: flex;
     align-items: center;
     justify-content: center;
-  `;
+`;
   
-  export const IconWrapper = styled.div`
-    background-color: white;
-    border-radius: 50%;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
-  
-  export const PhoneIcon = styled(FiPhone)`
-    color: #6a5acd;
-    font-size: 16px;
-  `;
-  
+export const IconWrapper = styled.div`
+  background-color: white;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const PhoneIcon = styled(FiPhone)`
+  color: #6a5acd;
+  font-size: 16px;
+`;
+
+export const EditIcon = styled(MdEdit)`
+color: #6a5acd;
+font-size: 16px;
+`;

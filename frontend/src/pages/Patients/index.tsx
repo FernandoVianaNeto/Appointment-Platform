@@ -13,7 +13,7 @@ import ListSummary from '../../core/components/ListSummary';
 import { MdDeleteOutline } from "react-icons/md";
 import LoadingSpinner from '../../core/components/Loading';
 import type { TPatientData } from '../../core/types/patient';
-import { createPatient, listPatients } from '../../core/services/patientService';
+import { createPatient, deletePatients, listPatients } from '../../core/services/patientService';
 import PatientCard from '../../core/components/PatientCard';
 import CreatePatientModal from '../../core/components/CreatePatientModal';
 
@@ -103,9 +103,11 @@ function Patients() {
   };
 
   const handleDeletePatients = async () => {
+    setLoading(true);
     try {
-      console.log(selectedItems)
-      // await deletePatients(selectedItems);
+      await deletePatients(selectedItems);
+      await getPatientsListByFilters();
+      setLoading(false);
     }
     catch (error: any) {
       if (error === "unauthorized") navigate('/login');
