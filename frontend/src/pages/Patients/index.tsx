@@ -17,7 +17,7 @@ import { createPatient, deletePatients, editPatient, listPatients } from '../../
 import PatientCard from '../../core/components/PatientCard';
 import CreatePatientModal from '../../core/components/CreatePatientModal';
 import EditPatientModal from '../../core/components/EditPatientModal';
-import { editAppointment } from '../../core/services/appointmentsService';
+import ConfirmationModal from '../../core/components/ConfirmationModal';
 
 function Patients() {
   const navigate = useNavigate();
@@ -29,6 +29,8 @@ function Patients() {
   const [allRowsSelected, setAllRowSelected] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const [isConfirmationModalOpened, setIsConfirmationModalOpen] = useState(false);
 
   const [patientToBeEditted, setPatientToBeEditted] = useState<TPatientData>();
   const [hasMorePatients, setHasMorePatients] = useState(true);
@@ -148,6 +150,15 @@ function Patients() {
     <Container>
       <CreatePatientModal onSave={(e) => handleCreatePatient(e)} isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} />
       <EditPatientModal onEdit={(e) => handleEditPatient(e)} isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} patient={patientToBeEditted as TPatientData}/>
+      <ConfirmationModal 
+        confirmationText={selectedItems.length > 1 ? `Are you sure you want to delete the patients?` : `Are you sure you want to delete the patient?` }
+        isOpen={isConfirmationModalOpened} 
+        onClose={() => setIsConfirmationModalOpen(false)} 
+        onConfirm={() => {
+          setIsConfirmationModalOpen(false)
+          handleDeletePatients()
+        }}
+      />
       <SideBar>
           <SideBarButton text="Appointments" onClick={() => navigate('/appointments')}/>
           <SideBarButton text="Patients" highlight />
@@ -170,7 +181,7 @@ function Patients() {
         <DashboardWrapper>
           <ListOptionsWrapper deleteSelection={rowSelection}>
             <span>Showing: <p>{loading ? 0 : totalItems} patients</p></span>
-            <button type="button" onClick={handleDeletePatients}>
+            <button type="button" onClick={() => setIsConfirmationModalOpen(true)}>
               <MdDeleteOutline />
             </button>
           </ListOptionsWrapper>

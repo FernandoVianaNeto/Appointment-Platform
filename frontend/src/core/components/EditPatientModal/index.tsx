@@ -16,22 +16,25 @@ function EditPatientModal ({ isOpen, onClose, onEdit, patient }: ModalProps) {
   const [phone, setPhone] = useState<string>(patient.phone);
   const [email, setEmail] = useState<string>(patient.email);
   const [insurance, setInsurance] = useState<string>(patient.insurance);
-  const [missingRequiredFields, setRequiredFields] = useState<boolean>();
+  const [isMissingRequiredFields, setIsMissingRequiredFields] = useState<boolean>();
+  // const [missingRequiredFields, setMissingRequiredFields] = useState<boolean>();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
 
     if (
+      form.patientName.value === "" ||
       form.patientName.value === undefined ||
       form.insurance.value === undefined || 
+      form.insurance.value === "" || 
       form.patientName.value === undefined || 
-      form.phone.value === undefined
+      form.phone.value === undefined ||
+      form.phone.value === ""
     ) {
-      setRequiredFields(true);
-      throw new Error('Could not save patient. Missing Required fields')
+      setIsMissingRequiredFields(true);
     } else {
-      setRequiredFields(false);
+      setIsMissingRequiredFields(false);
     }
     
     const data: TPatientData = {
@@ -42,8 +45,6 @@ function EditPatientModal ({ isOpen, onClose, onEdit, patient }: ModalProps) {
         name: name,
         phone: phone
     };
-
-    console.log("MODAL DAT", data)
 
     onEdit(data);
   };
@@ -87,14 +88,14 @@ function EditPatientModal ({ isOpen, onClose, onEdit, patient }: ModalProps) {
             Phone:
             <input className="phone-input" type="text" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)}/>
           </label>
-
+          {
+            isMissingRequiredFields && <p>Missing required fields</p>
+          }
           <div className="actions">
             <button type="submit">Edit</button>
             <button type="button" onClick={onClose}>Cancel</button>
           </div>
-          {
-            missingRequiredFields && <p>Missing required fields</p>
-          }
+          
         </form>
       </ModalContainer>
     </Overlay>
