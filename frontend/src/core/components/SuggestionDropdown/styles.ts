@@ -21,3 +21,21 @@ export const Ul = styled.ul<{
         cursor: pointer;
     }
 `;
+
+export const NoPatientsWrapper = styled.div<{
+    highlight?: boolean
+}>`
+    margin-top: 4px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-height: 150;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    background-color: white;
+    z-index: 1000;
+    width: 100%;
+`;

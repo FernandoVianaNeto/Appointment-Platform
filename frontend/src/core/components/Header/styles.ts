@@ -4,7 +4,7 @@ export const Container = styled.header`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 40px;
+    padding: 40px 0px;
     max-height: 120px;
     color: ${({theme}) => theme.colors.white};
     border-bottom: 2px solid ${({theme}) => theme.colors.highlighBackground};

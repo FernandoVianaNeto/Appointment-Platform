@@ -18,7 +18,6 @@ export async function listPatients(filters: TListPatientsFilters): Promise<any> 
       endpoint += `?${query.join('&')}`;
     }
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
-    console.log('PATIENTS RESPONSE', res.data)
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
@@ -63,12 +62,9 @@ export async function editPatient(formData: {
     const data: any = new FormData();
 
     for (const key in formData) {
-    console.log("DATA EDIT", key)
-
       data.append(key, formData[key]);
     }
 
-    console.log("DATA EDIT", data)
     const res = await api.put(`/patient/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
     return res.data;
   } catch (error: any) {
@@ -93,7 +89,6 @@ export async function deletePatients(input: string[]) {
       headers: { Authorization: token }
     });
 
-    console.log("DELETE RESPONSE",res);
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {

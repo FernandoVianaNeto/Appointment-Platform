@@ -21,7 +21,6 @@ import ConfirmationModal from '../../core/components/ConfirmationModal';
 
 function Patients() {
   const navigate = useNavigate();
-  // const initialLoad = useRef(true);
   const [searchTerm, setSearchTerm] = useState<string>();
   const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true);
@@ -50,7 +49,6 @@ function Patients() {
 
   const handleEditPatient = async (formData: any) => {
     try {
-      console.log("FORM DATA", formData)
       await editPatient(formData);
       setEditModalOpen(false);
       window.location.reload();
@@ -162,7 +160,6 @@ function Patients() {
       <SideBar>
           <SideBarButton text="Appointments" onClick={() => navigate('/appointments')}/>
           <SideBarButton text="Patients" highlight />
-          <SideBarButton text="Settings" onClick={() => navigate('/appointments')}/>
       </SideBar>
 
       <Dashboard>

@@ -11,8 +11,6 @@ export async function listAppointments(input: ListAppointmentsFilters): Promise<
   try {
     const token = localStorage.getItem('token');
 
-    console.log(input);
-
     let endpoint = '/appointment/list';
     const query = [];
     query.push(`page=${encodeURIComponent(input.page)}`);
@@ -24,7 +22,6 @@ export async function listAppointments(input: ListAppointmentsFilters): Promise<
       endpoint += `?${query.join('&')}`;
     }
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
-    console.log('RES', res.data)
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
@@ -99,7 +96,6 @@ export async function deleteAppointments(input: string[]) {
       headers: { Authorization: token }
     });
 
-    console.log(res);
     return res.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
