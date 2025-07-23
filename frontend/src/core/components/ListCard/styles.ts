@@ -15,7 +15,7 @@ export const AppointmentRow = styled.div<{
   color: #333;
   background-color: ${({ theme, rowSelected }) => rowSelected && theme.colors.highlighBackground};
   transition: transform 1s ease;
-
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   td {
     vertical-align: middle;
   }

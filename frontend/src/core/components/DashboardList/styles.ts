@@ -9,7 +9,6 @@ export const ScrollableList = styled.ul<{
   margin: 0;
   list-style: none;
   width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
   p {
     display: flex;

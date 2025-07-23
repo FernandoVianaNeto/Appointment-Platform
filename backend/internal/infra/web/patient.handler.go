@@ -103,12 +103,12 @@ func (s *Server) ListPatientHandler(ctx *gin.Context) {
 func (s *Server) DeletePatientHandler(ctx *gin.Context) {
 	var req requests.DeletePatientRequest
 
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request Uri"})
+	if err := ctx.ShouldBindBodyWithJSON(&req); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid request json"})
 		return
 	}
 
-	err := s.DeletePatientUsecase.Execute(ctx, dto.DeletePatientInputDto{Uuid: &req.Uuid})
+	err := s.DeletePatientUsecase.Execute(ctx, dto.DeletePatientInputDto{Uuids: req.Uuids})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})

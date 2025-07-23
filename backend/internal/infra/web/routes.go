@@ -34,7 +34,7 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 			patient.POST("/create", server.CreatePatientHandler)
 			patient.GET("/list", server.ListPatientHandler)
 			patient.PUT("/:uuid", server.EditPatientHandler)
-			patient.DELETE("/:uuid", server.DeletePatientHandler)
+			patient.DELETE("/", server.DeletePatientHandler)
 		}
 	}
 

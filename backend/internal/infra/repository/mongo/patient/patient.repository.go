@@ -109,10 +109,21 @@ func (f *PatientRepository) Edit(ctx context.Context, input dto.EditPatientInput
 	return err
 }
 
-func (f *PatientRepository) Delete(ctx context.Context, input dto.DeletePatientInputDto) {
-	filter := bson.M{"uuid": input.Uuid}
+func (f *PatientRepository) Delete(ctx context.Context, uuid string) {
+	filter := bson.M{"uuid": uuid}
 
 	f.collection.FindOneAndDelete(ctx, filter)
+}
+
+func (f *PatientRepository) DeleteMany(ctx context.Context, ids []string) error {
+	filter := bson.M{
+		"uuid": bson.M{
+			"$in": ids,
+		},
+	}
+
+	_, err := f.collection.DeleteMany(ctx, filter)
+	return err
 }
 
 func (f *PatientRepository) GetByUuid(ctx context.Context, uuid string) (entity.Patient, error) {

@@ -28,5 +28,5 @@ type EditPatientInputDto struct {
 }
 
 type DeletePatientInputDto struct {
-	Uuid *string `json:"uuid"`
+	Uuids []string `json:"uuids"`
 }
