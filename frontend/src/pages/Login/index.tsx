@@ -19,7 +19,6 @@ function Login() {
       console.error('Login error:', err);
   
       if (err instanceof Error && err.message === 'Invalid email or password') {
-        console.log(err)
         setError(true);
       } else {
         alert('Unexpected error occurred. Please try again later.');

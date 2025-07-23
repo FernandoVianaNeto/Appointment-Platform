@@ -34,8 +34,6 @@ function CreateAppointmentModal ({ isOpen, onClose, onSave }: ModalProps) {
     e.preventDefault();
     const form = e.currentTarget;
 
-    console.log(form.insurance.value === '', isMissingInsurance, isMissingLocation, isMissingProcedure, isMissingProcedureDuration, isMissingStartDate, isMissingStartTime);
-
     if (selectedPatient === undefined) {
       setIsMissingRequiredFields(true);
       setIsMissingName(true);

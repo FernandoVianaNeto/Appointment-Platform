@@ -49,7 +49,6 @@ function Patients() {
 
   const handleEditPatient = async (formData: any) => {
     try {
-      console.log("FORM DATA", formData)
       await editPatient(formData);
       setEditModalOpen(false);
       window.location.reload();
