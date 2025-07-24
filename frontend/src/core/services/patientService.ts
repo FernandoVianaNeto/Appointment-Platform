@@ -1,3 +1,4 @@
+import type { TGetPatientListResponse } from '../types/patient';
 import api from './api';
 
 type TListPatientsFilters = {
@@ -5,7 +6,23 @@ type TListPatientsFilters = {
   page: number,
 }
 
-export async function listPatients(filters: TListPatientsFilters): Promise<any> {
+type TCreatePatientData = {
+  patientName: string;
+  phone: string;
+  address?: string;
+  insurance?: string;
+  email?: string;
+}
+
+type TEditPatientData = {
+  uuid: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address?: string;
+}
+
+export async function listPatients(filters: TListPatientsFilters): Promise<TGetPatientListResponse> {
   try {
     const token = localStorage.getItem('token');
 
@@ -27,21 +44,28 @@ export async function listPatients(filters: TListPatientsFilters): Promise<any> 
   }
 }
 
-export async function createPatient(formData: {
-  patientName: string;
-  phone: string;
-  address?: string;
-  insurance?: string;
-  email?: string;
-}) : Promise<any> {
+export async function createPatient(formData: TCreatePatientData) : Promise<void> {
   try {
     const token = localStorage.getItem('token');
-    const data: any = new FormData();
+
+    const data = new FormData();
+
     for (const key in formData) {
-      data.append(key, formData[key]);
+      const typedKey = key as keyof TCreatePatientData;
+      const value = formData[typedKey];
+    
+      if (value !== undefined && value !== null) {
+        data.append(typedKey, String(value));
+      }
     }
-    const res = await api.post('/patient/create', data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
-    return res.data;
+
+    await api.post('/patient/create', data, { headers: 
+      { 
+        'Authorization': token, 
+        'Content-Type': 'multipart/form-data' 
+      }
+    });
+    return;
   } catch (error: any) {
     if (error.response?.status === 401) {
       throw new Error('unauthorized');
@@ -50,23 +74,23 @@ export async function createPatient(formData: {
   }
 }
 
-export async function editPatient(formData: {
-  uuid: string;
-  name: string;
-  phone: string;
-  email?: string;
-  address?: string;
-}) : Promise<any> {
+export async function editPatient(formData: TEditPatientData) : Promise<void> {
   try {
     const token = localStorage.getItem('token');
-    const data: any = new FormData();
+
+    const data = new FormData();
 
     for (const key in formData) {
-      data.append(key, formData[key]);
+      const typedKey = key as keyof TEditPatientData;
+      const value = formData[typedKey];
+    
+      if (value !== undefined && value !== null) {
+        data.append(typedKey, String(value));
+      }
     }
 
-    const res = await api.put(`/patient/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
-    return res.data;
+    await api.put(`/patient/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
+    return;
   } catch (error: any) {
     if (error.response?.status === 401) {
       throw new Error('unauthorized');
@@ -75,21 +99,21 @@ export async function editPatient(formData: {
   }
 }
 
-export async function deletePatients(input: string[]) {
+export async function deletePatients(input: string[]): Promise<void> {
   try {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('unauthorized');
 
     const endpoint = '/patient/';
 
-    const res = await api.delete(endpoint, {
+    await api.delete(endpoint, {
       data: {
         uuids: input
       },
       headers: { Authorization: token }
     });
 
-    return res.data;
+    return;
   } catch (error: any) {
     if (error.response?.status === 401) {
       throw new Error('unauthorized');

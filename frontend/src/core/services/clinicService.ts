@@ -9,16 +9,20 @@ type TCreateClinicFormData = {
 
 export async function createClinic(formData: TCreateClinicFormData): Promise<void> {
     try {
-        const data: any = new FormData();
+        const data = new FormData();
         for (const key in formData) {
-            data.append(key, formData[key]);
+            const typedKey = key as keyof TCreateClinicFormData;
+            const value = formData[typedKey];
+    
+            if (value !== undefined && value !== null) {
+                data.append(typedKey, String(value));
+            }
         }
 
         await api.post('/user/create', data, { headers: { 'Content-Type': 'multipart/form-data' }});
     
         return;
     } catch (error) {
-        console.log(error)
         const axiosError = error as AxiosError;
     
         if (axiosError.response?.status === 401) {
