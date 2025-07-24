@@ -1,17 +1,41 @@
+import type { AxiosError } from 'axios';
+import type { TAppointmentResponse } from '../types/appointments';
 import api from './api';
 
-interface ListAppointmentsFilters {
+type TListAppointmentsFilters = {
   page: string|number,
   searchTerm?: string, 
   filterType?: string,
   date?: string,
-}
+};
 
-export async function listAppointments(input: ListAppointmentsFilters): Promise<any> {
+type TCreateAppointmentFormData = {
+  patientName: string;
+  insurance: string;
+  procedure: string;
+  technician: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+};
+
+type TEditAppointmentFormData = {
+  uuid: string;
+  patientName: string;
+  insurance: string;
+  procedure: string;
+  technician: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+};
+
+export async function listAppointments(input: TListAppointmentsFilters): Promise<TAppointmentResponse> {
   try {
     const token = localStorage.getItem('token');
 
     let endpoint = '/appointment/list';
+
     const query = [];
     query.push(`page=${encodeURIComponent(input.page)}`);
 
@@ -21,64 +45,77 @@ export async function listAppointments(input: ListAppointmentsFilters): Promise<
       if (input.date) query.push(`date=${encodeURIComponent(input.date)}`);
       endpoint += `?${query.join('&')}`;
     }
+
     const res = await api.get(endpoint, { headers: { 'Authorization': token }});
+
     return res.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      throw new Error('unauthorized');
+  } catch (error) {
+    const axiosError = error as AxiosError;
+        
+    if (axiosError.response?.status === 401) {
+        throw new Error('Invalid email or password');
     }
-    throw new Error('Login failed');
+    
+    throw new Error('Could not list appointments by filters');
   }
 }
 
-export async function createAppointment(formData: {
-  patientName: string;
-  insurance: string;
-  procedure: string;
-  technician: string;
-  location: string;
-  start_date: string;
-  end_date: string;
-}) : Promise<any> {
+export async function createAppointment(formData: TCreateAppointmentFormData) : Promise<void> {
   try {
     const token = localStorage.getItem('token');
-    const data: any = new FormData();
+
+    const data = new FormData();
+
     for (const key in formData) {
-      data.append(key, formData[key]);
+      const typedKey = key as keyof TCreateAppointmentFormData;
+      const value = formData[typedKey];
+
+      if (value !== undefined && value !== null) {
+          data.append(typedKey, String(value));
+      }
     }
-    const res = await api.post('/appointment/create', data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
-    return res.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      throw new Error('unauthorized');
+
+    await api.post('/appointment/create', data, { headers: { 
+      'Authorization': token, 
+      'Content-Type': 'multipart/form-data' 
+    }});
+
+    return;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+        
+    if (axiosError.response?.status === 401) {
+        throw new Error('Invalid email or password');
     }
-    throw new Error(error);
+
+    throw new Error('Could not create an appointment');
   }
 }
 
-export async function editAppointment(formData: {
-  uuid: string;
-  patientName: string;
-  insurance: string;
-  procedure: string;
-  technician: string;
-  location: string;
-  start_date: string;
-  end_date: string;
-}) : Promise<any> {
+export async function editAppointment(formData: TEditAppointmentFormData) : Promise<any> {
   try {
     const token = localStorage.getItem('token');
-    const data: any = new FormData();
+    if (!token) throw new Error('unauthorized');
+
+    const data = new FormData();
     for (const key in formData) {
-      data.append(key, formData[key]);
+      const typedKey = key as keyof TEditAppointmentFormData;
+        const value = formData[typedKey];
+
+        if (value !== undefined && value !== null) {
+            data.append(typedKey, String(value));
+        }
     }
+    
     const res = await api.put(`/appointment/${formData.uuid}`, data, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' }});
     return res.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      throw new Error('unauthorized');
+  } catch (error) {
+    const axiosError = error as AxiosError;
+        
+    if (axiosError.response?.status === 401) {
+        throw new Error('Invalid email or password');
     }
-    throw new Error(error);
+    throw new Error("Error on edit appointment");
   }
 }
 
@@ -101,7 +138,6 @@ export async function deleteAppointments(input: string[]) {
     if (error.response?.status === 401) {
       throw new Error('unauthorized');
     }
-    console.error('Error deleting appointments:', error);
-    throw new Error('Delete failed');
+    throw new Error('Delete appointment failed');
   }
 }

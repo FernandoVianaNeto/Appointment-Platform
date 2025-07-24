@@ -24,9 +24,7 @@ function Login() {
     try {
       await login(email, password);
       navigate('/appointments');
-    } catch (err: any) {
-      console.error('Login error:', err);
-  
+    } catch (err) {
       if (err instanceof Error && err.message === 'Invalid email or password') {
         setError(true);
       } else {
