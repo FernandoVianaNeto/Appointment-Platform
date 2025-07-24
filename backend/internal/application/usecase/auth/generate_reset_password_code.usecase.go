@@ -8,6 +8,7 @@ import (
 	domain_usecase "appointment-platform-backend-backend/internal/domain/usecase/auth"
 	"context"
 	"errors"
+	"fmt"
 )
 
 type GenerateResetPasswordCodeUsecase struct {
@@ -29,8 +30,9 @@ func NewGenerateResetPasswordCodeUsecase(
 }
 
 func (a *GenerateResetPasswordCodeUsecase) Execute(ctx context.Context, input dto.GenerateResetPasswordCodeInputDto) error {
+	fmt.Println("CHEGUEI AQUI")
 	user, err := a.UserRepository.GetByEmailAndAuthProvider(ctx, input.Email, "local")
-
+	fmt.Println("user", user)
 	if err != nil {
 		return err
 	}
