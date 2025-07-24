@@ -22,7 +22,7 @@ export const Form = styled.form`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -39,13 +39,24 @@ export const Input = styled.input`
   border-radius: ${({ theme }) => theme.borderRadius};
 `;
 
-export const Button = styled.button`
+export const Button = styled.button<{
+  highlight?: boolean
+}>`
   width: 100%;
   padding: ${({ theme }) => theme.spacing.sm};
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: white;
+  background-color: ${({ theme, highlight }) => highlight ? theme.colors.primary : 'white'};
+  color:  ${({ theme, highlight }) => highlight ? 'white' : theme.colors.primary };
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius};
   cursor: pointer;
   font-weight: bold;
+`;
+
+export const ButtonWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
 `;
