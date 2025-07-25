@@ -10,7 +10,6 @@ import (
 	patient_usecase "appointment-platform-backend-backend/internal/application/usecase/patient"
 	user_usecase "appointment-platform-backend-backend/internal/application/usecase/users"
 	adapter "appointment-platform-backend-backend/internal/domain/adapters/email_sender"
-	"appointment-platform-backend-backend/internal/domain/adapters/messaging"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_service "appointment-platform-backend-backend/internal/domain/service"
 	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
@@ -24,7 +23,6 @@ import (
 	mongo_repository "appointment-platform-backend-backend/internal/infra/repository/mongo/user"
 	"appointment-platform-backend-backend/internal/infra/web"
 	mongoPkg "appointment-platform-backend-backend/pkg/mongo"
-	natsclient "appointment-platform-backend-backend/pkg/nats"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -76,9 +74,6 @@ func NewApplication() *web.Server {
 
 	db := mongoPkg.NewMongoDatabase(ctx, mongoConnectionInput)
 
-	eventClient := natsclient.New(configs.NatsCfg.Host)
-	eventClient.Connect()
-
 	repositories := NewRepositories(ctx, db)
 
 	services := NewServices(ctx)
@@ -93,7 +88,6 @@ func NewApplication() *web.Server {
 		repositories.AppointmentRepository,
 		services,
 		adapters,
-		eventClient,
 	)
 
 	srv := web.NewServer(
@@ -150,11 +144,9 @@ func NewAdapters(
 	ctx context.Context,
 ) Adapters {
 	emailSenderAdapter := sendgrid.NewEmailSenderAdapter(ctx)
-	// minioAdapter := NewStorageAdapter(ctx)
 
 	return Adapters{
 		emailSenderAdapter: emailSenderAdapter,
-		// storageAdapter:     minioAdapter,
 	}
 }
 
@@ -166,7 +158,6 @@ func NewUseCases(
 	appointmentRepository domain_repository.AppointmentRepositoryInterface,
 	services Services,
 	adapters Adapters,
-	eventClient messaging.Client,
 ) UseCases {
 	userUsecase := user_usecase.NewCreateUserUseCase(userRepository, services.encryptStringService)
 	getUserUsecase := user_usecase.NewGetUserProfileUseCase(userRepository)
@@ -210,27 +201,3 @@ func NewUseCases(
 		DeleteAppointmentUsecase:         deleteAppointmentUsecase,
 	}
 }
-
-// func NewStorageAdapter(
-// 	ctx context.Context,
-// ) storage_adapter.StorageAdapterInterface {
-// 	client, err := storage.NewMinioClient(
-// 		configs.MinIoCfg.Host,
-// 		configs.MinIoCfg.User,
-// 		configs.MinIoCfg.Password,
-// 	)
-
-// 	if err != nil {
-// 		panic("Failed to create MinIO client: " + err.Error())
-// 	}
-
-// 	err = storage.CreateBucketIfNotExists(ctx, client, configs.MinIoCfg.ProfileBucket)
-
-// 	if err != nil {
-// 		panic("Failed to create profile bucket: " + err.Error())
-// 	}
-
-// 	minioAdapter := minio.NewMinIoAdapter(ctx, client)
-
-// 	return minioAdapter
-// }

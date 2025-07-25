@@ -20,3 +20,11 @@ type ListAppointmentsResponse struct {
 	Data     []AppointmentData  `json:"data"`
 	Metadata PaginationMetadata `json:"metadata"`
 }
+
+type GetNextAppointmentsResponse struct {
+	Uuid         string `json:"uuid"`
+	StartDate    string `json:"start_date"`
+	EndDate      string `json:"end_date"`
+	Status       string `json:"status"`
+	ReminderSent bool   `json:"reminder_sent"`
+}

@@ -3,6 +3,7 @@ package cron
 import (
 	adapter "appointment-platform-backend-backend/internal/domain/adapters/email_sender"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
+	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
 	"context"
 	"log"
 
@@ -11,6 +12,7 @@ import (
 
 func StartReminderScheduler(
 	ctx context.Context,
+	usecase domain_usecase_appointment.GetNextAppointmentsAndSendReminder,
 	appointment_repository domain_repository.AppointmentRepositoryInterface,
 	emailSenderAdapter adapter.EmailSenderAdapterInterface,
 ) error {
