@@ -47,6 +47,7 @@ type UseCases struct {
 	EditAppointmentUsecase           domain_usecase_appointment.EditAppointmentUsecaseInterface
 	ListAppointmentUsecase           domain_usecase_appointment.ListAppointmentsUsecaseInterface
 	DeleteAppointmentUsecase         domain_usecase_appointment.DeleteAppointmentUsecaseInterface
+	SetAppointmentStatusUsecase      domain_usecase_appointment.SetAppointmentStatusUsecaseInterface
 }
 
 type Services struct {
@@ -108,6 +109,7 @@ func NewApplication() *web.Server {
 		usecases.EditAppointmentUsecase,
 		usecases.ListAppointmentUsecase,
 		usecases.DeleteAppointmentUsecase,
+		usecases.SetAppointmentStatusUsecase,
 	)
 
 	return srv
@@ -181,6 +183,7 @@ func NewUseCases(
 	editAppointmentUsecase := appointment_usecase.NewEditAppointmentUseCase(appointmentRepository)
 	deleteAppointmentUsecase := appointment_usecase.NewDeleteAppointmentUseCase(appointmentRepository)
 	createAppointmentUsecase := appointment_usecase.NewCreateAppointmentUseCase(appointmentRepository, patientRepository)
+	setAppointmentStatusUsecae := appointment_usecase.NewSetAppointmentStatusUsecase(appointmentRepository)
 
 	return UseCases{
 		userUseCase:                      userUsecase,
@@ -199,5 +202,6 @@ func NewUseCases(
 		EditAppointmentUsecase:           editAppointmentUsecase,
 		ListAppointmentUsecase:           listAppointmentUsecase,
 		DeleteAppointmentUsecase:         deleteAppointmentUsecase,
+		SetAppointmentStatusUsecase:      setAppointmentStatusUsecae,
 	}
 }

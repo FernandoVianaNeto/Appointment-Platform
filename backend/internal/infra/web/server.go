@@ -30,6 +30,7 @@ type Server struct {
 	EditAppointmentUsecase           domain_usecase_appointment.EditAppointmentUsecaseInterface
 	ListAppointmentUsecase           domain_usecase_appointment.ListAppointmentsUsecaseInterface
 	DeleteAppointmentUsecase         domain_usecase_appointment.DeleteAppointmentUsecaseInterface
+	SetAppointmentStatusUsecase      domain_usecase_appointment.SetAppointmentStatusUsecaseInterface
 }
 
 func NewServer(
@@ -50,6 +51,7 @@ func NewServer(
 	editAppointmentUsecase domain_usecase_appointment.EditAppointmentUsecaseInterface,
 	listAppointmentUsecase domain_usecase_appointment.ListAppointmentsUsecaseInterface,
 	deleteAppointmentUsecase domain_usecase_appointment.DeleteAppointmentUsecaseInterface,
+	setAppointmentStatusUsecase domain_usecase_appointment.SetAppointmentStatusUsecaseInterface,
 ) *Server {
 	router := gin.Default()
 
@@ -77,6 +79,7 @@ func NewServer(
 		EditAppointmentUsecase:           editAppointmentUsecase,
 		ListAppointmentUsecase:           listAppointmentUsecase,
 		DeleteAppointmentUsecase:         deleteAppointmentUsecase,
+		SetAppointmentStatusUsecase:      setAppointmentStatusUsecase,
 	}
 	server.router = Routes(router, server)
 
