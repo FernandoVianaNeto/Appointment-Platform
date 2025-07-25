@@ -1,13 +1,12 @@
 # 🗓️ Appointment Scheduling Platform with Google Calendar Integration
 
-This is a full-featured appointment scheduling platform built in Go, with Google Calendar integration via OAuth 2.0. Users can authenticate using their Google accounts, manage availability, and automatically sync events to their Google Calendar.
+This is a full-featured appointment scheduling platform built in Go. Users can authenticate using their Google accounts, manage availability, and automatically sync events to their Google Calendar.
 
 ---
 
 ## 🚀 Features
 
-- 🔐 Secure authentication via Google OAuth 2.0  
-- 📆 Real-time Google Calendar integration (read/write)  
+- 🔐 Secure authentication via JWT
 - ✅ Custom time slot availability and appointment booking  
 - 📊 Personal dashboard (upcoming appointments, availability overview)  
 - 🔧 RESTful API built with Gin  
@@ -20,11 +19,11 @@ This is a full-featured appointment scheduling platform built in Go, with Google
 
 | Layer     | Technology                         |
 |-----------|------------------------------------|
-| Backend   | Go, Gin, OAuth2                    |
-| API       | Google Calendar API, Google User Info API |
-| Database  | PostgreSQL or MongoDB (pluggable)  |
-| Auth      | Google OAuth 2.0 (JWT planned)     |
-| Deploy    | Docker (optional), .env config     |
+| Backend   | Go, Gin, SendGrid (email sender)   |
+| API       | SendGrid from Twilio               |
+| Database  | MongoDB                            |
+| Auth      | JWT                                |
+| Deploy    | Docker                             |
 
 ---
 
