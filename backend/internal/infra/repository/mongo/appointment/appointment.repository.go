@@ -38,16 +38,17 @@ func (f *AppointmentRepository) Create(ctx context.Context, input entity.Appoint
 	}
 
 	appointmentEntity := AppointmentModel{
-		UserUuid:    input.UserUuid,
-		Uuid:        input.Uuid,
-		StartDate:   input.StartDate,
-		EndDate:     input.EndDate,
-		PatientUuid: input.PatientUuid,
-		Insurance:   input.Insurance,
-		Technician:  input.Technician,
-		Location:    input.Location,
-		Status:      input.Status,
-		Procedure:   input.Procedure,
+		UserUuid:     input.UserUuid,
+		Uuid:         input.Uuid,
+		StartDate:    input.StartDate,
+		EndDate:      input.EndDate,
+		PatientUuid:  input.PatientUuid,
+		Insurance:    input.Insurance,
+		Technician:   input.Technician,
+		Location:     input.Location,
+		Status:       input.Status,
+		Procedure:    input.Procedure,
+		ReminderSent: input.ReminderSent,
 	}
 
 	_, err = f.collection.InsertOne(ctx, appointmentEntity)
@@ -189,6 +190,80 @@ func (f *AppointmentRepository) CountDocuments(ctx context.Context, input dto.Li
 	return total, err
 }
 
+func (f *AppointmentRepository) GetNextAppointments(ctx context.Context, window time.Duration) (*[]entity.Appointment, error) {
+	now := time.Now().UTC()
+	from := time.Now().Format("2006-01-02T15:04")
+	to := time.Now().Add(24 * time.Hour).Format("2006-01-02T15:04")
+
+	fmt.Println(now, from, to)
+
+	filter := bson.M{
+		"start_date": bson.M{
+			"$gte": from,
+			"$lt":  to,
+		},
+		"reminder_sent": false,
+	}
+
+	cursor, err := f.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var appointments []AppointmentModel
+	if err := cursor.All(ctx, &appointments); err != nil {
+		return nil, err
+	}
+
+	entitiesAppointment := make([]entity.Appointment, 0, len(appointments))
+	for _, appointment := range appointments {
+		entitiesAppointment = append(entitiesAppointment, entity.Appointment{
+			Uuid:        appointment.Uuid,
+			UserUuid:    appointment.UserUuid,
+			StartDate:   appointment.StartDate,
+			EndDate:     appointment.EndDate,
+			PatientUuid: appointment.PatientUuid,
+			Insurance:   appointment.Insurance,
+			Technician:  appointment.Technician,
+			Location:    appointment.Location,
+			Status:      appointment.Status,
+			Procedure:   appointment.Procedure,
+		})
+	}
+
+	return &entitiesAppointment, err
+}
+
+func (f *AppointmentRepository) UpdateReminderSent(ctx context.Context, uuid string) error {
+	filter := bson.M{
+		"uuid":          uuid,
+		"reminder_sent": false,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"reminder_sent": true,
+		},
+	}
+
+	err := f.collection.FindOneAndUpdate(ctx, filter, update).Err()
+	return err
+}
+
+func (f *AppointmentRepository) UpdateStatus(ctx context.Context, status string, uuid string) error {
+	filter := bson.M{
+		"uuid": uuid,
+	}
+
+	update := bson.M{
+		"status": status,
+	}
+
+	err := f.collection.FindOneAndUpdate(ctx, filter, update).Err()
+	return err
+}
+
 func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
 	filters := bson.M{
 		"user_uuid": input.UserUuid,
@@ -197,7 +272,6 @@ func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
 	var start string
 	if input.Date == nil {
 		now := time.Now()
-		fmt.Println("NOW", now)
 		startUTC := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 		start = startUTC.Format("2006-01-02")
 
@@ -209,8 +283,6 @@ func buildListFilters(input dto.ListAppointmentInputDto) bson.M {
 		"$regex":   start,
 		"$options": "i",
 	}
-
-	fmt.Println(input)
 
 	if input.SearchInput != nil {
 		if input.FilterType != nil {

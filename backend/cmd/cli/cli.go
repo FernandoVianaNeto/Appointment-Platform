@@ -7,6 +7,7 @@ import (
 	"appointment-platform-backend-backend/internal/infra/adapter/sendgrid"
 	"appointment-platform-backend-backend/internal/infra/cron"
 	appointment_mongo_repository "appointment-platform-backend-backend/internal/infra/repository/mongo/appointment"
+	patient_mongo_repository "appointment-platform-backend-backend/internal/infra/repository/mongo/patient"
 	mongoPkg "appointment-platform-backend-backend/pkg/mongo"
 	"context"
 	"fmt"
@@ -64,10 +65,11 @@ var appointmentReminderCronCmd = &cobra.Command{
 		db := mongoPkg.NewMongoDatabase(ctx, mongoConnectionInput)
 
 		appointmentRepository := appointment_mongo_repository.NewAppointmentRepository(db)
+		patientRepository := patient_mongo_repository.NewPatientRepository(db)
 
 		emailSenderAdapter := sendgrid.NewEmailSenderAdapter(ctx)
 
-		usecase := appointment_usecase.NewGetNextAppointmentsAndSendReminder(appointmentRepository, emailSenderAdapter)
+		usecase := appointment_usecase.NewGetNextAppointmentsAndSendReminder(appointmentRepository, patientRepository, emailSenderAdapter)
 
 		cron.StartReminderScheduler(ctx, usecase, appointmentRepository, emailSenderAdapter)
 	},

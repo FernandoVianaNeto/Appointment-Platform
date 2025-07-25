@@ -5,9 +5,9 @@ type CreatePatientInputDto struct {
 	UserUuid  string  `json:"user_uuid"`
 	Name      string  `json:"name"`
 	Phone     string  `json:"phone"`
-	Email     *string `json:"email"`
+	Email     string  `json:"email"`
+	Insurance string  `json:"insurance"`
 	Address   *string `json:"address"`
-	Insurance *string `json:"insurance"`
 }
 
 type ListPatientInputDto struct {

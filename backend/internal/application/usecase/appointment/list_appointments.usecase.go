@@ -52,7 +52,7 @@ func (u *ListAppointmentUsecase) Execute(ctx context.Context, input dto.ListAppo
 				EndDate:   appointment.EndDate,
 				Patient: domain_response.Patient{
 					Name:      patient.Name,
-					Insurance: *patient.Insurance,
+					Insurance: patient.Insurance,
 					Phone:     patient.Phone,
 				},
 				Procedure: appointment.Procedure,

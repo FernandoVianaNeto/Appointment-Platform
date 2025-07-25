@@ -5,6 +5,7 @@ import (
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/robfig/cron/v3"
@@ -18,13 +19,15 @@ func StartReminderScheduler(
 ) error {
 	c := cron.New()
 
-	c.AddFunc("@every 1m", func() {
-		err := checkAppointmentsAndSendReminders()
+	c.AddFunc("@every 600s", func() {
+		fmt.Println("CRON RUN")
+		err := usecase.Execute(ctx)
 		if err != nil {
-			log.Printf("Erro ao enviar lembretes: %v", err)
+			log.Printf("Erro on send reminder: %v", err)
 		}
 	})
 
+	fmt.Println("CRON SUCCESSFULLY STARTED")
 	c.Start()
-	select {} // Keep it running
+	select {}
 }
