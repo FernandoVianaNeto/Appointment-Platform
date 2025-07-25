@@ -12,6 +12,6 @@ type DeleteAppointmentRequest struct {
 }
 
 type SetAppointmentStatusRequest struct {
-	Status string `form:"status" required:"true"`
-	Uuid   string `form:"uuid" required:"true"`
+	Status string `form:"status"`
+	Uuid   string `form:"uuid"`
 }

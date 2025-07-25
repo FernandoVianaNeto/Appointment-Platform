@@ -170,7 +170,7 @@ func (s *Server) SetAppointmentStatus(ctx *gin.Context) {
 	var req requests.SetAppointmentStatusRequest
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid query."})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query."})
 		return
 	}
 

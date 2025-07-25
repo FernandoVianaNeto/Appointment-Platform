@@ -141,3 +141,19 @@ export async function deleteAppointments(input: string[]) {
     throw new Error('Delete appointment failed');
   }
 }
+
+
+export async function updateAppointmentStatus(uuid: string, status: string) {
+  try {
+    const endpoint = `/appointment/update-status?uuid=${uuid}&status=${status}`;
+
+    const res = await api.post(endpoint);
+
+    return res.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('unauthorized');
+    }
+    throw new Error('Delete appointment failed');
+  }
+}

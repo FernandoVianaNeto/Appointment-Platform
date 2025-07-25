@@ -257,7 +257,9 @@ func (f *AppointmentRepository) UpdateStatus(ctx context.Context, status string,
 	}
 
 	update := bson.M{
-		"status": status,
+		"$set": bson.M{
+			"status": status,
+		},
 	}
 
 	err := f.collection.FindOneAndUpdate(ctx, filter, update).Err()

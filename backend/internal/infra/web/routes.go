@@ -39,12 +39,13 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 	}
 
 	{
-		appointment := engine.Group("/appointment", middleware.JwtAuthMiddleware())
+		appointment := engine.Group("/appointment")
 		{
-			appointment.POST("/create", server.CreateAppointmentHandler)
-			appointment.GET("/list", server.ListAppointmentsHandler)
-			appointment.PUT("/:uuid", server.EditAppointmentHandler)
-			appointment.DELETE("/", server.DeleteAppointmentHandler)
+			appointment.POST("/create", middleware.JwtAuthMiddleware(), server.CreateAppointmentHandler)
+			appointment.GET("/list", middleware.JwtAuthMiddleware(), server.ListAppointmentsHandler)
+			appointment.PUT("/:uuid", middleware.JwtAuthMiddleware(), server.EditAppointmentHandler)
+			appointment.DELETE("/", middleware.JwtAuthMiddleware(), server.DeleteAppointmentHandler)
+			appointment.POST("/update-status", server.SetAppointmentStatus)
 		}
 	}
 
