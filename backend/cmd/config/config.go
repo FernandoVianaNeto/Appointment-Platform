@@ -9,12 +9,11 @@ import (
 )
 
 var (
-	ApplicationCfg *ApplicationConfig
-	MongoCfg       *MongoConfig
-	GoogleAuthCfg  *GoogleAuthConfig
-	SendGridCfg    *SendGridConfig
-	MinIoCfg       *MinIOConfig
-	NatsCfg        *NatsConfig
+	ApplicationCfg  *ApplicationConfig
+	MongoCfg        *MongoConfig
+	GoogleAuthCfg   *GoogleAuthConfig
+	SendGridCfg     *SendGridConfig
+	ReminderCronCfg *ReminderCronConfig
 )
 
 const (
@@ -39,6 +38,10 @@ type GoogleAuthConfig struct {
 
 type SendGridConfig struct {
 	ApiKey string
+}
+
+type ReminderCronConfig struct {
+	Window int
 }
 
 type MinIOConfig struct {
@@ -77,8 +80,7 @@ func InitializeConfigs() {
 	initializeMongoConfigs()
 	initializeGoogleAuthConfigs()
 	initializeSendGridConfigs()
-	initializeMinIOConfigs()
-	initializeNatsConfigs()
+	initializeReminderCronConfig()
 }
 
 func getEnv(key string, defaultVal string) string {
@@ -141,25 +143,10 @@ func initializeSendGridConfigs() {
 	}
 }
 
-func initializeMinIOConfigs() {
-	if MinIoCfg == nil {
-		MinIoCfg = &MinIOConfig{
-			Host:                   getEnv("MINIO_HOST", "localhost:9000"),
-			User:                   getEnv("MINIO_USER", "root"),
-			Password:               getEnv("MINIO_PASSWORD", "password"),
-			ProfileBucket:          getEnv("MINIO_PROFILE_BUCKET", "profile"),
-			PresignedURLExpiration: getEnv("PRESIGNED_URL_EXPIRATION", "60"), // Default to 60 minutes
-		}
-	}
-}
-
-func initializeNatsConfigs() {
-	if NatsCfg == nil {
-		NatsCfg = &NatsConfig{
-			Host:      getEnv("NATS_HOST", "nats://localhost:4222"),
-			User:      getEnv("NATS_USER", "root"),
-			Password:  getEnv("NATS_PASSWORD", "password"),
-			UserTopic: getEnv("NATS_USER_TOPIC", "user.events"),
+func initializeReminderCronConfig() {
+	if ReminderCronCfg == nil {
+		ReminderCronCfg = &ReminderCronConfig{
+			Window: getEnvAsInt("REMINDER_CRON_WINDOW", 24),
 		}
 	}
 }

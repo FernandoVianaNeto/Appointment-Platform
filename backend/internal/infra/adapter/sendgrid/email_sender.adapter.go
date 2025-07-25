@@ -37,3 +37,23 @@ func (f *EmailSenderAdapter) SendResetPasswordEmail(ctx context.Context, toEmail
 
 	return nil
 }
+
+func (f *EmailSenderAdapter) SendAppointmentReminder(ctx context.Context, toEmail string, procedure string, doctor string, link string) error {
+	from := mail.NewEmail("Appointment Plataform", "forfit.application@gmail.com")
+	subject := "Confirm appointment"
+	to := mail.NewEmail("User", toEmail)
+	plainTextContent := fmt.Sprintf("Click in the link to confirm, reschedule or cancel your appointment: %s", link)
+	htmlContent := fmt.Sprintf("<strong>Click in the link to confirm, reschedule or cancel your appointment: %s</strong>", link)
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	client := sendgrid.NewSendClient(configs.SendGridCfg.ApiKey)
+	response, err := client.Send(message)
+	if err != nil {
+		log.Println(err)
+	} else {
+		fmt.Println(response.StatusCode)
+		fmt.Println(response.Body)
+		fmt.Println(response.Headers)
+	}
+
+	return nil
+}

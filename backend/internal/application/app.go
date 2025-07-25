@@ -10,8 +10,6 @@ import (
 	patient_usecase "appointment-platform-backend-backend/internal/application/usecase/patient"
 	user_usecase "appointment-platform-backend-backend/internal/application/usecase/users"
 	adapter "appointment-platform-backend-backend/internal/domain/adapters/email_sender"
-	"appointment-platform-backend-backend/internal/domain/adapters/messaging"
-	storage_adapter "appointment-platform-backend-backend/internal/domain/adapters/storage"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_service "appointment-platform-backend-backend/internal/domain/service"
 	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
@@ -25,7 +23,6 @@ import (
 	mongo_repository "appointment-platform-backend-backend/internal/infra/repository/mongo/user"
 	"appointment-platform-backend-backend/internal/infra/web"
 	mongoPkg "appointment-platform-backend-backend/pkg/mongo"
-	natsclient "appointment-platform-backend-backend/pkg/nats"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -50,6 +47,7 @@ type UseCases struct {
 	EditAppointmentUsecase           domain_usecase_appointment.EditAppointmentUsecaseInterface
 	ListAppointmentUsecase           domain_usecase_appointment.ListAppointmentsUsecaseInterface
 	DeleteAppointmentUsecase         domain_usecase_appointment.DeleteAppointmentUsecaseInterface
+	SetAppointmentStatusUsecase      domain_usecase_appointment.SetAppointmentStatusUsecaseInterface
 }
 
 type Services struct {
@@ -58,7 +56,6 @@ type Services struct {
 
 type Adapters struct {
 	emailSenderAdapter adapter.EmailSenderAdapterInterface
-	storageAdapter     storage_adapter.StorageAdapterInterface
 }
 
 type Repositories struct {
@@ -78,9 +75,6 @@ func NewApplication() *web.Server {
 
 	db := mongoPkg.NewMongoDatabase(ctx, mongoConnectionInput)
 
-	eventClient := natsclient.New(configs.NatsCfg.Host)
-	eventClient.Connect()
-
 	repositories := NewRepositories(ctx, db)
 
 	services := NewServices(ctx)
@@ -95,7 +89,6 @@ func NewApplication() *web.Server {
 		repositories.AppointmentRepository,
 		services,
 		adapters,
-		eventClient,
 	)
 
 	srv := web.NewServer(
@@ -116,6 +109,7 @@ func NewApplication() *web.Server {
 		usecases.EditAppointmentUsecase,
 		usecases.ListAppointmentUsecase,
 		usecases.DeleteAppointmentUsecase,
+		usecases.SetAppointmentStatusUsecase,
 	)
 
 	return srv
@@ -152,11 +146,9 @@ func NewAdapters(
 	ctx context.Context,
 ) Adapters {
 	emailSenderAdapter := sendgrid.NewEmailSenderAdapter(ctx)
-	// minioAdapter := NewStorageAdapter(ctx)
 
 	return Adapters{
 		emailSenderAdapter: emailSenderAdapter,
-		// storageAdapter:     minioAdapter,
 	}
 }
 
@@ -168,11 +160,10 @@ func NewUseCases(
 	appointmentRepository domain_repository.AppointmentRepositoryInterface,
 	services Services,
 	adapters Adapters,
-	eventClient messaging.Client,
 ) UseCases {
-	userUsecase := user_usecase.NewCreateUserUseCase(userRepository, services.encryptStringService, adapters.storageAdapter)
+	userUsecase := user_usecase.NewCreateUserUseCase(userRepository, services.encryptStringService)
 	getUserUsecase := user_usecase.NewGetUserProfileUseCase(userRepository)
-	updateUserUsecase := user_usecase.NewUpdateUserUseCase(userRepository, adapters.storageAdapter)
+	updateUserUsecase := user_usecase.NewUpdateUserUseCase(userRepository)
 
 	//AUTH
 	authUsecase := auth_usecase.NewAuthUsecase(userRepository)
@@ -192,6 +183,7 @@ func NewUseCases(
 	editAppointmentUsecase := appointment_usecase.NewEditAppointmentUseCase(appointmentRepository)
 	deleteAppointmentUsecase := appointment_usecase.NewDeleteAppointmentUseCase(appointmentRepository)
 	createAppointmentUsecase := appointment_usecase.NewCreateAppointmentUseCase(appointmentRepository, patientRepository)
+	setAppointmentStatusUsecae := appointment_usecase.NewSetAppointmentStatusUsecase(appointmentRepository)
 
 	return UseCases{
 		userUseCase:                      userUsecase,
@@ -210,29 +202,6 @@ func NewUseCases(
 		EditAppointmentUsecase:           editAppointmentUsecase,
 		ListAppointmentUsecase:           listAppointmentUsecase,
 		DeleteAppointmentUsecase:         deleteAppointmentUsecase,
+		SetAppointmentStatusUsecase:      setAppointmentStatusUsecae,
 	}
 }
-
-// func NewStorageAdapter(
-// 	ctx context.Context,
-// ) storage_adapter.StorageAdapterInterface {
-// 	client, err := storage.NewMinioClient(
-// 		configs.MinIoCfg.Host,
-// 		configs.MinIoCfg.User,
-// 		configs.MinIoCfg.Password,
-// 	)
-
-// 	if err != nil {
-// 		panic("Failed to create MinIO client: " + err.Error())
-// 	}
-
-// 	err = storage.CreateBucketIfNotExists(ctx, client, configs.MinIoCfg.ProfileBucket)
-
-// 	if err != nil {
-// 		panic("Failed to create profile bucket: " + err.Error())
-// 	}
-
-// 	minioAdapter := minio.NewMinIoAdapter(ctx, client)
-
-// 	return minioAdapter
-// }

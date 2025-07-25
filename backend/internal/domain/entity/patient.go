@@ -4,10 +4,10 @@ type Patient struct {
 	Uuid      string  `json:"uuid"`
 	UserUuid  string  `json:"user_uuid"`
 	Name      string  `json:"name"`
-	Phone     string  `json:"phone,omitempty"`
-	Insurance *string `json:"insurance"`
+	Phone     string  `json:"phone"`
+	Insurance string  `json:"insurance"`
+	Email     string  `json:"email"`
 	Address   *string `json:"address,omitempty"`
-	Email     *string `json:"email,omitempty"`
 }
 
 func NewPatient(
@@ -15,9 +15,9 @@ func NewPatient(
 	user_uuid string,
 	name string,
 	phone string,
-	insurance *string,
+	insurance string,
 	address *string,
-	email *string,
+	email string,
 ) *Patient {
 	entity := &Patient{
 		Uuid:      uuid,

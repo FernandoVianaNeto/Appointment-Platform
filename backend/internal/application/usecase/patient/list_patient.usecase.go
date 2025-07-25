@@ -45,10 +45,10 @@ func (u *ListPatientUsecase) Execute(ctx context.Context, input dto.ListPatientI
 		response = append(response, domain_response.PatientData{
 			Uuid:      patient.Uuid,
 			Name:      patient.Name,
-			Insurance: *patient.Insurance,
+			Insurance: patient.Insurance,
 			Phone:     patient.Phone,
 			Address:   *patient.Address,
-			Email:     *patient.Email,
+			Email:     patient.Email,
 		})
 	}
 

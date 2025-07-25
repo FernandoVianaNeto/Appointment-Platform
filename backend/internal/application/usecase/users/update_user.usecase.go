@@ -1,7 +1,6 @@
 package user_usecase
 
 import (
-	storage_adapter "appointment-platform-backend-backend/internal/domain/adapters/storage"
 	"appointment-platform-backend-backend/internal/domain/dto"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_usecase "appointment-platform-backend-backend/internal/domain/usecase/user"
@@ -10,16 +9,13 @@ import (
 
 type UpdateUserUsecase struct {
 	UserRepository domain_repository.UserRepositoryInterface
-	StorageAdapter storage_adapter.StorageAdapterInterface
 }
 
 func NewUpdateUserUseCase(
 	repository domain_repository.UserRepositoryInterface,
-	storage storage_adapter.StorageAdapterInterface,
 ) domain_usecase.UpdateUserUsecaseInterface {
 	return &UpdateUserUsecase{
 		UserRepository: repository,
-		StorageAdapter: storage,
 	}
 }
 

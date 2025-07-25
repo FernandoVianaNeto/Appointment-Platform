@@ -39,11 +39,11 @@ func (s *Server) CreatePatientHandler(ctx *gin.Context) {
 
 	createPatientDto := dto.CreatePatientInputDto{
 		UserUuid:  userUuid,
-		Email:     &email,
+		Email:     email,
 		Name:      form.Get("name"),
 		Phone:     form.Get("phone"),
 		Address:   &address,
-		Insurance: &insurance,
+		Insurance: insurance,
 	}
 
 	err = s.CreatePatientUsecase.Execute(ctx, createPatientDto)

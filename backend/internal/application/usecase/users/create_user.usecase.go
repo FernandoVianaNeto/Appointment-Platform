@@ -1,7 +1,6 @@
 package user_usecase
 
 import (
-	storage_adapter "appointment-platform-backend-backend/internal/domain/adapters/storage"
 	"appointment-platform-backend-backend/internal/domain/dto"
 	"appointment-platform-backend-backend/internal/domain/entity"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
@@ -16,18 +15,15 @@ import (
 type CreateUserUsecase struct {
 	UserRepository       domain_repository.UserRepositoryInterface
 	EncryptStringService domain_service.EncryptStringServiceInterface
-	StorageAdapter       storage_adapter.StorageAdapterInterface
 }
 
 func NewCreateUserUseCase(
 	repository domain_repository.UserRepositoryInterface,
 	encryptStringService domain_service.EncryptStringServiceInterface,
-	storageAdapter storage_adapter.StorageAdapterInterface,
 ) domain_usecase.CreateUserUsecaseInterface {
 	return &CreateUserUsecase{
 		UserRepository:       repository,
 		EncryptStringService: encryptStringService,
-		StorageAdapter:       storageAdapter,
 	}
 }
 

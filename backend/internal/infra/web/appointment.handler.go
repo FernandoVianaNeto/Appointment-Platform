@@ -165,3 +165,21 @@ func (s *Server) DeleteAppointmentHandler(ctx *gin.Context) {
 
 	ctx.Status(http.StatusOK)
 }
+
+func (s *Server) SetAppointmentStatus(ctx *gin.Context) {
+	var req requests.SetAppointmentStatusRequest
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Invalid query."})
+		return
+	}
+
+	err := s.SetAppointmentStatusUsecase.Execute(ctx, dto.SetAppointmentStatusInputDto{Uuid: req.Uuid, Status: req.Status})
+
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}

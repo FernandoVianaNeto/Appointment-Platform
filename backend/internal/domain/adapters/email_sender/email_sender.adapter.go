@@ -8,4 +8,5 @@ import (
 
 type EmailSenderAdapterInterface interface {
 	SendResetPasswordEmail(ctx context.Context, toEmail string, code int) error
+	SendAppointmentReminder(ctx context.Context, toEmail string, procedure string, doctor string, link string) error
 }

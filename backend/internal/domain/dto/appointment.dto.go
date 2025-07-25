@@ -31,3 +31,8 @@ type EditAppointmentInputDto struct {
 type DeleteAppointmentInputDto struct {
 	Uuids []string `json:"uuids"`
 }
+
+type SetAppointmentStatusInputDto struct {
+	Uuid   string `json:"uuid"`
+	Status string `json:"status"`
+}
