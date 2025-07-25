@@ -4,6 +4,7 @@ import (
 	"appointment-platform-backend-backend/internal/domain/dto"
 	mongo_exception "appointment-platform-backend-backend/internal/infra/exceptions"
 	"appointment-platform-backend-backend/internal/infra/web/requests"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -75,6 +76,7 @@ func (s *Server) ResetPasswordHandler(ctx *gin.Context) {
 		return
 	}
 
+	fmt.Println("request", req)
 	err := s.ResetPasswordUsecase.Execute(ctx, dto.ResetPasswordInputDto{
 		Code:        req.Code,
 		NewPassword: req.NewPassword,
