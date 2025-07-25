@@ -44,7 +44,7 @@ function Login() {
         <ButtonWrapper>
           <Button type="submit" highlight>Sign in</Button>
           <Button type="button" onClick={() => setIsSignUpModalOpen(true)}>Sign up</Button>
-          <Button type="button">Forgot Password</Button>
+          <Button type="button" onClick={() => navigate('/forgot-password')}>Forgot Password</Button>
         </ButtonWrapper>
       </Form>
     </Container>

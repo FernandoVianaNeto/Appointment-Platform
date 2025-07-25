@@ -30,7 +30,6 @@ func NewGenerateResetPasswordCodeUsecase(
 
 func (a *GenerateResetPasswordCodeUsecase) Execute(ctx context.Context, input dto.GenerateResetPasswordCodeInputDto) error {
 	user, err := a.UserRepository.GetByEmailAndAuthProvider(ctx, input.Email, "local")
-
 	if err != nil {
 		return err
 	}
