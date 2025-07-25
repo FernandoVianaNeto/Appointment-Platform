@@ -11,7 +11,6 @@ import (
 	user_usecase "appointment-platform-backend-backend/internal/application/usecase/users"
 	adapter "appointment-platform-backend-backend/internal/domain/adapters/email_sender"
 	"appointment-platform-backend-backend/internal/domain/adapters/messaging"
-	storage_adapter "appointment-platform-backend-backend/internal/domain/adapters/storage"
 	domain_repository "appointment-platform-backend-backend/internal/domain/repository"
 	domain_service "appointment-platform-backend-backend/internal/domain/service"
 	domain_usecase_appointment "appointment-platform-backend-backend/internal/domain/usecase/appointment"
@@ -58,7 +57,6 @@ type Services struct {
 
 type Adapters struct {
 	emailSenderAdapter adapter.EmailSenderAdapterInterface
-	storageAdapter     storage_adapter.StorageAdapterInterface
 }
 
 type Repositories struct {
@@ -170,9 +168,9 @@ func NewUseCases(
 	adapters Adapters,
 	eventClient messaging.Client,
 ) UseCases {
-	userUsecase := user_usecase.NewCreateUserUseCase(userRepository, services.encryptStringService, adapters.storageAdapter)
+	userUsecase := user_usecase.NewCreateUserUseCase(userRepository, services.encryptStringService)
 	getUserUsecase := user_usecase.NewGetUserProfileUseCase(userRepository)
-	updateUserUsecase := user_usecase.NewUpdateUserUseCase(userRepository, adapters.storageAdapter)
+	updateUserUsecase := user_usecase.NewUpdateUserUseCase(userRepository)
 
 	//AUTH
 	authUsecase := auth_usecase.NewAuthUsecase(userRepository)
