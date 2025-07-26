@@ -108,7 +108,7 @@ func initializeApplicationConfigs() {
 		ApplicationCfg = &ApplicationConfig{
 			Env:        getEnv("APP_ENV", "local"),
 			AppVersion: AppVersion,
-			AppPort:    getEnvAsInt("APP_PORT", 3001),
+			AppPort:    getEnvAsInt("APP_PORT", 8080),
 			JwtSecret:  getEnv("JWT_SECRET", "random_hash"),
 		}
 	}

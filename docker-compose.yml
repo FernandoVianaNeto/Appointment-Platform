@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: .setup/build/Dockerfile
+    container_name: backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+    command: ["/bin/application", "http"]
+
+  cronjob:
+    build:
+      context: ./backend
+      dockerfile: .setup/build/Dockerfile    
+    container_name: appointment-reminder-cron
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+    command: ["/bin/application", "appointment-reminder-cron"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: .setup/Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
