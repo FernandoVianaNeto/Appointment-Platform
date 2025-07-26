@@ -1,13 +1,20 @@
-# 🗓️ Appointment Scheduling Platform with Google Calendar Integration
+# 🗓️ Appointment Scheduling Platform
 
-This is a full-featured appointment scheduling platform built in Go, with Google Calendar integration via OAuth 2.0. Users can authenticate using their Google accounts, manage availability, and automatically sync events to their Google Calendar.
+This is a full-featured appointment scheduling platform built in Go and React. Users can authenticate using their email and password, manage availability, create patients for their clinics with address, email, phones and names.
 
+Functionalities: 
+  The patient can:
+    Reset their password by verifying the code received via email.
+    Receive an email 24 hours before their appointment to confirm or cancel it.
+  The clinic can:
+    Create appointments by linking them to previously registered patients.
+    Register new patients for their clinic.
+    
 ---
 
 ## 🚀 Features
 
-- 🔐 Secure authentication via Google OAuth 2.0  
-- 📆 Real-time Google Calendar integration (read/write)  
+- 🔐 Secure authentication via JWT
 - ✅ Custom time slot availability and appointment booking  
 - 📊 Personal dashboard (upcoming appointments, availability overview)  
 - 🔧 RESTful API built with Gin  
@@ -20,17 +27,11 @@ This is a full-featured appointment scheduling platform built in Go, with Google
 
 | Layer     | Technology                         |
 |-----------|------------------------------------|
-| Backend   | Go, Gin, OAuth2                    |
-| API       | Google Calendar API, Google User Info API |
-| Database  | PostgreSQL or MongoDB (pluggable)  |
-| Auth      | Google OAuth 2.0 (JWT planned)     |
-| Deploy    | Docker (optional), .env config     |
-
----
-
-## 📸 Screenshots
-
-_(coming soon)_ — Calendar UI, availability management, dashboard summary.
+| Backend   | Go, Gin, SendGrid (email sender)   |
+| API       | SendGrid                           |
+| Database  | MongoDB                            |
+| Auth      | JWT                                |
+| Deploy    | Docker                             |
 
 ---
 
@@ -41,14 +42,29 @@ _(coming soon)_ — Calendar UI, availability management, dashboard summary.
 ```bash
 git clone https://github.com/YOUR_USERNAME/appointment-platform.git
 cd appointment-platform
-
+```
 ### 2. Copy the envs to the project root, as the example bellow
-
 ```bash
-    APP_ENV=local
-    APP_PORT=8080
-    JWT_SECRET=your_jwt_secret
-    MONGO_DSN=mongodb://mongo:27017
-    MONGO_DB=appointment-platform
-    SEND_GRID_API_KEY=your_sendgrid_api_key
-    GOOGLE_CLIENT_ID=your_google_client_id
+  APP_ENV=local
+  APP_PORT=8080
+  JWT_SECRET=your_jwt_secret
+  MONGO_DSN=mongodb://mongo:27017
+  MONGO_DB=appointment-platform
+  SEND_GRID_API_KEY=your_sendgrid_api_key
+  GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+### 3. Run the build command:
+```bash
+  docker-compose build
+```
+
+### 4. Run the up command:
+```bash
+  docker-compose up -d
+```
+
+### 4. Or, if you prefer, use the Makefile command:
+```bash
+  make up
+```
