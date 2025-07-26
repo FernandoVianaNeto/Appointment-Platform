@@ -41,3 +41,14 @@ _(coming soon)_ — Calendar UI, availability management, dashboard summary.
 ```bash
 git clone https://github.com/YOUR_USERNAME/appointment-platform.git
 cd appointment-platform
+
+### 2. Copy the envs to the project root, as the example bellow
+
+```bash
+    APP_ENV=local
+    APP_PORT=8080
+    JWT_SECRET=your_jwt_secret
+    MONGO_DSN=mongodb://mongo:27017
+    MONGO_DB=appointment-platform
+    SEND_GRID_API_KEY=your_sendgrid_api_key
+    GOOGLE_CLIENT_ID=your_google_client_id
