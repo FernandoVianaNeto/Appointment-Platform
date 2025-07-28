@@ -39,7 +39,7 @@ func (f *EmailSenderAdapter) SendResetPasswordEmail(ctx context.Context, toEmail
 }
 
 func (f *EmailSenderAdapter) SendAppointmentReminder(ctx context.Context, toEmail string, procedure string, doctor string, link string) error {
-	from := mail.NewEmail("Appointment Plataform", configs.SendGridCfg.ReminderEmail)
+	from := mail.NewEmail("Appointment Plataform", configs.SendGridCfg.NoReplyEmail)
 	subject := "Confirm appointment"
 	to := mail.NewEmail("User", toEmail)
 	plainTextContent := fmt.Sprintf("Click in the link to confirm, reschedule or cancel your appointment: %s", link)
