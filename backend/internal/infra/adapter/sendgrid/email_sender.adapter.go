@@ -19,7 +19,7 @@ func NewEmailSenderAdapter(ctx context.Context) adapter.EmailSenderAdapterInterf
 }
 
 func (f *EmailSenderAdapter) SendResetPasswordEmail(ctx context.Context, toEmail string, code int) error {
-	from := mail.NewEmail("Appointment Plataform", "forfit.application@gmail.com")
+	from := mail.NewEmail("Appointment Plataform", configs.SendGridCfg.NoReplyEmail)
 	subject := "Your reset password code is here"
 	to := mail.NewEmail("User", "fernando.viana.nt@gmail.com")
 	plainTextContent := fmt.Sprintf("Use the following code to reset your password: %d", code)
@@ -39,7 +39,7 @@ func (f *EmailSenderAdapter) SendResetPasswordEmail(ctx context.Context, toEmail
 }
 
 func (f *EmailSenderAdapter) SendAppointmentReminder(ctx context.Context, toEmail string, procedure string, doctor string, link string) error {
-	from := mail.NewEmail("Appointment Plataform", "forfit.application@gmail.com")
+	from := mail.NewEmail("Appointment Plataform", configs.SendGridCfg.ReminderEmail)
 	subject := "Confirm appointment"
 	to := mail.NewEmail("User", toEmail)
 	plainTextContent := fmt.Sprintf("Click in the link to confirm, reschedule or cancel your appointment: %s", link)

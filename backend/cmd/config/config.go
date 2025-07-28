@@ -37,26 +37,13 @@ type GoogleAuthConfig struct {
 }
 
 type SendGridConfig struct {
-	ApiKey string
+	ApiKey        string
+	NoReplyEmail  string
+	ReminderEmail string
 }
 
 type ReminderCronConfig struct {
 	Window int
-}
-
-type MinIOConfig struct {
-	Host                   string
-	User                   string
-	Password               string
-	ProfileBucket          string
-	PresignedURLExpiration string
-}
-
-type NatsConfig struct {
-	Host      string
-	User      string
-	Password  string
-	UserTopic string
 }
 
 type MongoConfig struct {
@@ -138,7 +125,9 @@ func initializeGoogleAuthConfigs() {
 func initializeSendGridConfigs() {
 	if SendGridCfg == nil {
 		SendGridCfg = &SendGridConfig{
-			ApiKey: getEnv("SEND_GRID_API_KEY", "your-sendgrid-api-key"),
+			ApiKey:        getEnv("SEND_GRID_API_KEY", "your-sendgrid-api-key"),
+			NoReplyEmail:  getEnv("SEND_GRID_NO_REPLY_EMAIL", "noreply@test.com"),
+			ReminderEmail: getEnv("SEND_GRID_REMINDER_EMAIL", "reminder@test.com"),
 		}
 	}
 }
