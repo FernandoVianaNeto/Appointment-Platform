@@ -11,7 +11,7 @@ package domain_auth_usecase
 
 import (
 	dto "appointment-platform-backend-backend/internal/domain/dto"
-	response "appointment-platform-backend-backend/internal/domain/response"
+	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	context "context"
 	reflect "reflect"
 
@@ -43,10 +43,10 @@ func (m *MockAuthUsecaseInterface) EXPECT() *MockAuthUsecaseInterfaceMockRecorde
 }
 
 // Execute mocks base method.
-func (m *MockAuthUsecaseInterface) Execute(ctx context.Context, input dto.AuthInputDto) (response.AuthResponse, error) {
+func (m *MockAuthUsecaseInterface) Execute(ctx context.Context, input dto.AuthInputDto) (domain_response.AuthResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", ctx, input)
-	ret0, _ := ret[0].(response.AuthResponse)
+	ret0, _ := ret[0].(domain_response.AuthResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

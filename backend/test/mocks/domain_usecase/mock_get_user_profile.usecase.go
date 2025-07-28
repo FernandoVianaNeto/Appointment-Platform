@@ -11,7 +11,7 @@ package domain_usecase
 
 import (
 	dto "appointment-platform-backend-backend/internal/domain/dto"
-	response "appointment-platform-backend-backend/internal/domain/response"
+	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	context "context"
 	reflect "reflect"
 
@@ -43,10 +43,10 @@ func (m *MockGetUserProfileUsecaseInterface) EXPECT() *MockGetUserProfileUsecase
 }
 
 // Execute mocks base method.
-func (m *MockGetUserProfileUsecaseInterface) Execute(ctx context.Context, input dto.GetUserInputDto) (*response.GetUserProfileResponse, error) {
+func (m *MockGetUserProfileUsecaseInterface) Execute(ctx context.Context, input dto.GetUserInputDto) (*domain_response.GetUserProfileResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", ctx, input)
-	ret0, _ := ret[0].(*response.GetUserProfileResponse)
+	ret0, _ := ret[0].(*domain_response.GetUserProfileResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

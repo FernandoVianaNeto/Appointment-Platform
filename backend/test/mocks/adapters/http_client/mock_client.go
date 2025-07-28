@@ -10,7 +10,7 @@
 package http_client
 
 import (
-	http "appointment-platform-backend-backend/pkg/client/http"
+	http_client "appointment-platform-backend-backend/pkg/client/http"
 	context "context"
 	url "net/url"
 	reflect "reflect"
@@ -123,7 +123,7 @@ func (mr *MockHTTPClientMockRecorder) Post(ctx, endpoint, params, body any) *gom
 }
 
 // SetHeaders mocks base method.
-func (m *MockHTTPClient) SetHeaders(headers ...http.OptionalHeaders) {
+func (m *MockHTTPClient) SetHeaders(headers ...http_client.OptionalHeaders) {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range headers {

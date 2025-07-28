@@ -11,7 +11,7 @@ package domain_usecase_appointment
 
 import (
 	dto "appointment-platform-backend-backend/internal/domain/dto"
-	response "appointment-platform-backend-backend/internal/domain/response"
+	domain_response "appointment-platform-backend-backend/internal/domain/response"
 	context "context"
 	reflect "reflect"
 
@@ -43,10 +43,10 @@ func (m *MockListAppointmentsUsecaseInterface) EXPECT() *MockListAppointmentsUse
 }
 
 // Execute mocks base method.
-func (m *MockListAppointmentsUsecaseInterface) Execute(ctx context.Context, input dto.ListAppointmentInputDto) (response.ListAppointmentsResponse, error) {
+func (m *MockListAppointmentsUsecaseInterface) Execute(ctx context.Context, input dto.ListAppointmentInputDto) (domain_response.ListAppointmentsResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", ctx, input)
-	ret0, _ := ret[0].(response.ListAppointmentsResponse)
+	ret0, _ := ret[0].(domain_response.ListAppointmentsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
