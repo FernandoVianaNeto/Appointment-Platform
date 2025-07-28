@@ -35,12 +35,12 @@ func (u *GetNextAppointmentsAndSendReminder) Execute(ctx context.Context) error 
 
 	appointments, err := u.AppointmentRepository.GetNextAppointments(ctx, time.Duration(window)*time.Hour)
 
-	fmt.Println("CALLED WITH APPOINTMENTS", appointments)
-
-	if err != nil || appointments == nil {
-		fmt.Println(appointments, err)
-
+	if err != nil {
 		return err
+	}
+
+	if appointments == nil || len(*appointments) == 0 {
+		return nil
 	}
 
 	for _, appointment := range *appointments {
@@ -62,9 +62,9 @@ func (u *GetNextAppointmentsAndSendReminder) Execute(ctx context.Context) error 
 
 		if err != nil {
 			fmt.Println("ERROR ON UPDATE REMINDER SENT", appointment, err)
+			return err
 		}
 
-		fmt.Println("REMINDER SENT AND SUCCESSFULLY UPDATED", appointment)
 	}
 
 	return err

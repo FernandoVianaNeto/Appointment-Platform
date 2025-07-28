@@ -35,7 +35,6 @@ type UseCases struct {
 	GetUserUsecase                   domain_usecase.GetUserProfileUsecaseInterface
 	UpdateUserUsecase                domain_usecase.UpdateUserUsecaseInterface
 	AuthUsecase                      domain_auth_usecase.AuthUsecaseInterface
-	GoogleAuthUsecase                domain_auth_usecase.GoogleAuthUsecaseInterface
 	GenerateResetPasswordCodeUsecase domain_auth_usecase.GenerateResetPasswordCodeUsecaseInterface
 	ResetPasswordUsecase             domain_auth_usecase.ResetPasswordUsecaseInterface
 	ValidateResetPasswordCodeUsecase domain_auth_usecase.ValidateResetPasswordCodeUsecaseInterface
@@ -97,7 +96,6 @@ func NewApplication() *web.Server {
 		usecases.GetUserUsecase,
 		usecases.UpdateUserUsecase,
 		usecases.AuthUsecase,
-		usecases.GoogleAuthUsecase,
 		usecases.GenerateResetPasswordCodeUsecase,
 		usecases.ResetPasswordUsecase,
 		usecases.ValidateResetPasswordCodeUsecase,
@@ -167,7 +165,6 @@ func NewUseCases(
 
 	//AUTH
 	authUsecase := auth_usecase.NewAuthUsecase(userRepository)
-	googleAuthUsecase := auth_usecase.NewGoogleAuthUsecase(userRepository)
 	generateResetPasswordCodeUsecase := auth_usecase.NewGenerateResetPasswordCodeUsecase(resetPasswordCodeRepository, userRepository, adapters.emailSenderAdapter)
 	resetPasswordUsecase := auth_usecase.NewResetPasswordUsecase(userRepository, resetPasswordCodeRepository, services.encryptStringService)
 	validateResetPasswordCodeUsecase := auth_usecase.NewValidateResetPasswordCodeUsecase(resetPasswordCodeRepository)
@@ -190,7 +187,6 @@ func NewUseCases(
 		GetUserUsecase:                   getUserUsecase,
 		UpdateUserUsecase:                updateUserUsecase,
 		AuthUsecase:                      authUsecase,
-		GoogleAuthUsecase:                googleAuthUsecase,
 		GenerateResetPasswordCodeUsecase: generateResetPasswordCodeUsecase,
 		ResetPasswordUsecase:             resetPasswordUsecase,
 		ValidateResetPasswordCodeUsecase: validateResetPasswordCodeUsecase,

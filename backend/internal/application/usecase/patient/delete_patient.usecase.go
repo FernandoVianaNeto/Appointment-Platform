@@ -20,7 +20,7 @@ func NewDeletePatientUseCase(
 }
 
 func (u *DeletePatientUsecase) Execute(ctx context.Context, input dto.DeletePatientInputDto) error {
-	u.PatientRepository.DeleteMany(ctx, input.Uuids)
+	err := u.PatientRepository.DeleteMany(ctx, input.Uuids)
 
-	return nil
+	return err
 }
