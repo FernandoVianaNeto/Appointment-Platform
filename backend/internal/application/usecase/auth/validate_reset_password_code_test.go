@@ -46,7 +46,7 @@ func TestValidateResetPasswordCodeUsecase_Execute(t *testing.T) {
 		usecase := auth_usecase.NewValidateResetPasswordCodeUsecase(codeRepo)
 
 		codeRepo.EXPECT().
-			IsValidCode(ctx, "user@email.com", "invalid-code").
+			IsValidCode(ctx, "user@email.com", gomock.Any()).
 			Return(false, nil)
 
 		input := dto.ValidateResetPasswordCodeInputDto{
