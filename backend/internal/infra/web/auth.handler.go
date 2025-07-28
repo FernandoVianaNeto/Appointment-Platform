@@ -27,29 +27,6 @@ func (s *Server) AuthHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (s *Server) GoogleAuthHandler(ctx *gin.Context) {
-	var req requests.GoogleAuthRequest
-
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	response, err := s.GoogleAuthUsecase.Execute(ctx, dto.GoogleAuthInputDto{Token: req.Token})
-
-	if err != nil {
-		if err.Error() == mongo_exception.MongoNotFoundException {
-			ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "User not found"})
-			return
-		}
-
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response)
-}
-
 func (s *Server) GenerateResetPasswordCodeHandler(ctx *gin.Context) {
 	var req requests.GenerateResetPasswordCodeRequest
 
