@@ -9,7 +9,16 @@ Functionalities:
   The clinic can:
     Create appointments by linking them to previously registered patients.
     Register new patients for their clinic.
-    
+
+
+✅ Checkout the demo:
+https://appointment-platform-two.vercel.app/login
+(Note: Due to inactivity, the first load might be a bit slow)
+
+Deployment: 
+Database: Atlas MongoDB
+Backend: Render
+Frontend: Vercel
 ---
 
 ## 🚀 Features
