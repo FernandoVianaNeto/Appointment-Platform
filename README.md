@@ -16,9 +16,11 @@ https://appointment-platform-two.vercel.app/login
 (Note: Due to inactivity, the first load might be a bit slow)
 
 Deployment: 
-Database: Atlas MongoDB
-Backend: Render
-Frontend: Vercel
+  Database: Atlas MongoDB
+  Backend: Render
+  Frontend: Vercel
+
+🔄 Note: Deployments are triggered automatically whenever code is merged into the main branch
 ---
 
 ## 🚀 Features
