@@ -61,6 +61,7 @@ cd appointment-platform
   MONGO_DB=appointment-platform
   SEND_GRID_API_KEY=your_sendgrid_api_key
   GOOGLE_CLIENT_ID=your_google_client_id
+  VITE_API_URL=http://localhost:8080
 ```
 
 ### 3. Run the build command:
